@@ -1,5 +1,5 @@
 //
-//  CandideWindow.h
+//  CDWindow.h
 //  candide
 //
 //  Created by Damian Stewart on 03.11.13.
@@ -13,16 +13,18 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 
-#include <FL/gl.h>
-#include <FL/Fl_Gl_Window.H>
+#include "CDFaceWindow.h"
 
-
-class CandideWindow : public Fl_Gl_Window
+class CDWindow : public Fl_Window
 {
 public:
-	CandideWindow( int x, int y, int w, int h);
+	CDWindow( int w, int h, const char* label );
+	~CDWindow();
 	
-	void draw();
+	void resize( int x, int y, int w, int h);
+	
+private:
+	CDFaceWindow* faceWindow;
 };
 
 

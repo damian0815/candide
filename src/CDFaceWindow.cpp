@@ -1,20 +1,21 @@
 //
-//  CandideWindow.cpp
+//  CDFaceWindow.cpp
 //  candide
 //
-//  Created by Damian Stewart on 03.11.13.
+//  Created by damian on 03/11/13.
 //  Copyright (c) 2013 Damian Stewart. All rights reserved.
 //
 
-#include "CandideWindow.h"
-#include <math.h>
+#include "CDFaceWindow.h"
+#include <Fl/math.h>
 
-CandideWindow::CandideWindow(int x, int y, int w, int h)
-: Fl_Gl_Window(x, y, w, h, "CandideGL")
+CDFaceWindow::CDFaceWindow(int x, int y, int w, int h, const CDFaceData& _faceData )
+: Fl_Gl_Window(x, y, w, h, "FaceGL")
+, faceData(_faceData)
 {
 }
 
-void CandideWindow::draw()
+void CDFaceWindow::draw()
 {
 	if ( !valid() ) {
 		valid(1);
@@ -46,4 +47,6 @@ void CandideWindow::draw()
 	glEnd();
 	
 }
+
+
 

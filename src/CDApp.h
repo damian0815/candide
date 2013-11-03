@@ -1,5 +1,5 @@
 //
-//  CandideApp.h
+//  CDApp.h
 //  candide
 //
 //  Created by Damian Stewart on 03.11.13.
@@ -11,12 +11,12 @@
 
 #include <iostream>
 
-class CandideApp
+class CDApp
 {
 public:
-	CandideApp( int argc, const char* argv[] );
+	CDApp( int argc, const char* argv[] );
 	
-	static CandideApp* getInstance();
+	static CDApp* getInstance();
 	
 	int run();
 	

@@ -7,33 +7,49 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2D13188C182652B7005624D7 /* CandideApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D13188A182652B7005624D7 /* CandideApp.cpp */; };
+		2D13188C182652B7005624D7 /* CDApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D13188A182652B7005624D7 /* CDApp.cpp */; };
 		2D13188E18265498005624D7 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D13188D18265498005624D7 /* OpenGL.framework */; };
 		2D189B361826510B0085EBED /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D189B341826510B0085EBED /* main.cpp */; };
-		2D189B3A182651430085EBED /* CandideWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D189B38182651430085EBED /* CandideWindow.cpp */; };
+		2D189B3A182651430085EBED /* CDWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D189B38182651430085EBED /* CDWindow.cpp */; };
+		2D2528EE18267752004647E1 /* CDFaceWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2528EC18267752004647E1 /* CDFaceWindow.cpp */; };
+		2D2528F418267CB7004647E1 /* CDFaceData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2528F218267CB7004647E1 /* CDFaceData.cpp */; };
+		2D2528F718267E39004647E1 /* CDAppException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2528F518267E39004647E1 /* CDAppException.cpp */; };
+		2D2528FC182680AD004647E1 /* CDUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2528FA182680AD004647E1 /* CDUtilities.cpp */; };
+		2D25290418268713004647E1 /* candide3.wfm in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D252903182686D0004647E1 /* candide3.wfm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		2D189B26182650D60085EBED /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 16;
 			files = (
+				2D25290418268713004647E1 /* candide3.wfm in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2D13188A182652B7005624D7 /* CandideApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CandideApp.cpp; path = src/CandideApp.cpp; sourceTree = SOURCE_ROOT; };
-		2D13188B182652B7005624D7 /* CandideApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CandideApp.h; path = src/CandideApp.h; sourceTree = SOURCE_ROOT; };
+		2D13188A182652B7005624D7 /* CDApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDApp.cpp; path = src/CDApp.cpp; sourceTree = SOURCE_ROOT; };
+		2D13188B182652B7005624D7 /* CDApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDApp.h; path = src/CDApp.h; sourceTree = SOURCE_ROOT; };
 		2D13188D18265498005624D7 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		2D189B28182650D60085EBED /* candide */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = candide; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D189B28182650D60085EBED /* candide */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = candide; path = Candide; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D189B341826510B0085EBED /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
 		2D189B351826510B0085EBED /* shape.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shape.cxx; path = src/shape.cxx; sourceTree = SOURCE_ROOT; };
-		2D189B38182651430085EBED /* CandideWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CandideWindow.cpp; path = src/CandideWindow.cpp; sourceTree = SOURCE_ROOT; };
-		2D189B39182651430085EBED /* CandideWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CandideWindow.h; path = src/CandideWindow.h; sourceTree = SOURCE_ROOT; };
+		2D189B38182651430085EBED /* CDWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDWindow.cpp; path = src/CDWindow.cpp; sourceTree = SOURCE_ROOT; };
+		2D189B39182651430085EBED /* CDWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDWindow.h; path = src/CDWindow.h; sourceTree = SOURCE_ROOT; };
+		2D2528EC18267752004647E1 /* CDFaceWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDFaceWindow.cpp; path = src/CDFaceWindow.cpp; sourceTree = SOURCE_ROOT; };
+		2D2528ED18267752004647E1 /* CDFaceWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDFaceWindow.h; path = src/CDFaceWindow.h; sourceTree = SOURCE_ROOT; };
+		2D2528F218267CB7004647E1 /* CDFaceData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDFaceData.cpp; path = src/CDFaceData.cpp; sourceTree = SOURCE_ROOT; };
+		2D2528F318267CB7004647E1 /* CDFaceData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDFaceData.h; path = src/CDFaceData.h; sourceTree = SOURCE_ROOT; };
+		2D2528F518267E39004647E1 /* CDAppException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDAppException.cpp; path = src/CDAppException.cpp; sourceTree = SOURCE_ROOT; };
+		2D2528F618267E39004647E1 /* CDAppException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDAppException.h; path = src/CDAppException.h; sourceTree = SOURCE_ROOT; };
+		2D2528FA182680AD004647E1 /* CDUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDUtilities.cpp; path = src/CDUtilities.cpp; sourceTree = SOURCE_ROOT; };
+		2D2528FB182680AD004647E1 /* CDUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDUtilities.h; path = src/CDUtilities.h; sourceTree = SOURCE_ROOT; };
+		2D252900182686AE004647E1 /* CDCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDCommon.h; path = src/CDCommon.h; sourceTree = SOURCE_ROOT; };
+		2D252903182686D0004647E1 /* candide3.wfm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = candide3.wfm; path = data/candide3.wfm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,8 +67,9 @@
 		2D189B1F182650D60085EBED = {
 			isa = PBXGroup;
 			children = (
-				2D13188D18265498005624D7 /* OpenGL.framework */,
 				2D189B2A182650D60085EBED /* src */,
+				2D252902182686BB004647E1 /* frameworks */,
+				2D252901182686B6004647E1 /* data */,
 				2D189B29182650D60085EBED /* Products */,
 			);
 			sourceTree = "<group>";
@@ -68,15 +85,64 @@
 		2D189B2A182650D60085EBED /* src */ = {
 			isa = PBXGroup;
 			children = (
-				2D189B341826510B0085EBED /* main.cpp */,
+				2D2528FD182680BB004647E1 /* UI */,
+				2D2528FF182680CB004647E1 /* Model */,
+				2D2528FE182680C5004647E1 /* Glue */,
 				2D189B351826510B0085EBED /* shape.cxx */,
-				2D13188A182652B7005624D7 /* CandideApp.cpp */,
-				2D13188B182652B7005624D7 /* CandideApp.h */,
-				2D189B38182651430085EBED /* CandideWindow.cpp */,
-				2D189B39182651430085EBED /* CandideWindow.h */,
 			);
 			name = src;
 			path = candide;
+			sourceTree = "<group>";
+		};
+		2D2528FD182680BB004647E1 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				2D13188A182652B7005624D7 /* CDApp.cpp */,
+				2D13188B182652B7005624D7 /* CDApp.h */,
+				2D2528EC18267752004647E1 /* CDFaceWindow.cpp */,
+				2D2528ED18267752004647E1 /* CDFaceWindow.h */,
+				2D189B38182651430085EBED /* CDWindow.cpp */,
+				2D189B39182651430085EBED /* CDWindow.h */,
+			);
+			name = UI;
+			sourceTree = "<group>";
+		};
+		2D2528FE182680C5004647E1 /* Glue */ = {
+			isa = PBXGroup;
+			children = (
+				2D252900182686AE004647E1 /* CDCommon.h */,
+				2D2528F518267E39004647E1 /* CDAppException.cpp */,
+				2D2528F618267E39004647E1 /* CDAppException.h */,
+				2D2528FA182680AD004647E1 /* CDUtilities.cpp */,
+				2D2528FB182680AD004647E1 /* CDUtilities.h */,
+				2D189B341826510B0085EBED /* main.cpp */,
+			);
+			name = Glue;
+			sourceTree = "<group>";
+		};
+		2D2528FF182680CB004647E1 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				2D2528F218267CB7004647E1 /* CDFaceData.cpp */,
+				2D2528F318267CB7004647E1 /* CDFaceData.h */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		2D252901182686B6004647E1 /* data */ = {
+			isa = PBXGroup;
+			children = (
+				2D252903182686D0004647E1 /* candide3.wfm */,
+			);
+			name = data;
+			sourceTree = "<group>";
+		};
+		2D252902182686BB004647E1 /* frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2D13188D18265498005624D7 /* OpenGL.framework */,
+			);
+			name = frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -130,8 +196,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D13188C182652B7005624D7 /* CandideApp.cpp in Sources */,
-				2D189B3A182651430085EBED /* CandideWindow.cpp in Sources */,
+				2D13188C182652B7005624D7 /* CDApp.cpp in Sources */,
+				2D2528F418267CB7004647E1 /* CDFaceData.cpp in Sources */,
+				2D189B3A182651430085EBED /* CDWindow.cpp in Sources */,
+				2D2528FC182680AD004647E1 /* CDUtilities.cpp in Sources */,
+				2D2528EE18267752004647E1 /* CDFaceWindow.cpp in Sources */,
+				2D2528F718267E39004647E1 /* CDAppException.cpp in Sources */,
 				2D189B361826510B0085EBED /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

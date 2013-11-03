@@ -1,26 +1,26 @@
 //
-//  CandideApp.cpp
+//  CDApp.cpp
 //  candide
 //
 //  Created by Damian Stewart on 03.11.13.
 //  Copyright (c) 2013 Damian Stewart. All rights reserved.
 //
 
-#include "CandideApp.h"
-#include "CandideWindow.h"
+#include "CDApp.h"
+#include "CDWindow.h"
 
 #include <Fl/Fl.h>
 #include <assert.h>
 
-static CandideApp* instance = NULL;
+static CDApp* instance = NULL;
 
-CandideApp* CandideApp::getInstance()
+CDApp* CDApp::getInstance()
 {
 	assert(instance);
 	return instance;
 }
 
-CandideApp::CandideApp( int argc, const char* argv[] )
+CDApp::CDApp( int argc, const char* argv[] )
 {
 	instance = this;
 }
@@ -36,12 +36,10 @@ static void exitCallback( Fl_Widget* widget )
 	}
 }
 
-int CandideApp::run()
+int CDApp::run()
 {
-	Fl_Window window(300,330,"Candide");
-	
-	CandideWindow cw(0,0,300,300);
-	window.resizable(cw);
+	CDWindow window(300,330,"CD");
+
 	
 	window.callback(&exitCallback);
 	
