@@ -82,9 +82,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		2D189B27182650D60085EBED /* candide */ = {
+		2D189B27182650D60085EBED /* Candide */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2D189B31182650D60085EBED /* Build configuration list for PBXNativeTarget "candide" */;
+			buildConfigurationList = 2D189B31182650D60085EBED /* Build configuration list for PBXNativeTarget "Candide" */;
 			buildPhases = (
 				2D189B24182650D60085EBED /* Sources */,
 				2D189B25182650D60085EBED /* Frameworks */,
@@ -94,7 +94,7 @@
 			);
 			dependencies = (
 			);
-			name = candide;
+			name = Candide;
 			productName = candide;
 			productReference = 2D189B28182650D60085EBED /* candide */;
 			productType = "com.apple.product-type.tool";
@@ -120,7 +120,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				2D189B27182650D60085EBED /* candide */,
+				2D189B27182650D60085EBED /* Candide */,
 			);
 		};
 /* End PBXProject section */
@@ -253,7 +253,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2D189B31182650D60085EBED /* Build configuration list for PBXNativeTarget "candide" */ = {
+		2D189B31182650D60085EBED /* Build configuration list for PBXNativeTarget "Candide" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2D189B32182650D60085EBED /* Debug */,

@@ -10,7 +10,7 @@
 #include <math.h>
 
 CandideWindow::CandideWindow(int x, int y, int w, int h)
-: Fl_Gl_Window(x, y, w, h, "Candide")
+: Fl_Gl_Window(x, y, w, h, "CandideGL")
 {
 }
 

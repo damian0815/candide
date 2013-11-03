@@ -38,7 +38,7 @@ static void exitCallback( Fl_Widget* widget )
 
 int CandideApp::run()
 {
-	Fl_Window window(300,330);
+	Fl_Window window(300,330,"Candide");
 	
 	CandideWindow cw(0,0,300,300);
 	window.resizable(cw);
