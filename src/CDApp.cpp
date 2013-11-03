@@ -38,7 +38,7 @@ static void exitCallback( Fl_Widget* widget )
 
 int CDApp::run()
 {
-	CDWindow window(300,330,"CD");
+	CDWindow window(300,330,"Candide");
 
 	
 	window.callback(&exitCallback);

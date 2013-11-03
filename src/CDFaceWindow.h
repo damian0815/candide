@@ -25,6 +25,8 @@ public:
 	
 	void draw();
 	
+	void setShapeUnit( const std::string& unitName, float value );
+	
 protected:
 	
 private:

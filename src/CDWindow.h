@@ -23,6 +23,8 @@ public:
 	
 	void resize( int x, int y, int w, int h);
 	
+	void sliderChanged( std::string sliderName, double newValue );
+	
 private:
 	CDFaceWindow* faceWindow;
 };

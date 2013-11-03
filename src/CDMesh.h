@@ -14,8 +14,12 @@
 #include <glm/glm.hpp>
 #include <Fl/gl.h>
 
+class CDFaceDistortionUnit;
+
 class CDMesh
 {
+	friend class CDFaceDistortionUnit;
+	
 public:
 	CDMesh(): wireframe(true) {};
 	
@@ -30,6 +34,8 @@ public:
 		Triangle(): Triangle(0,0,0) {};
 		Triangle( short v0, short v1, short v2 ) { v[0] = v0; v[1] = v1; v[2] = v2; }
 	};
+	
+	size_t getNumVertices() { return vertices.size(); }
 	
 	glm::vec3 getBoundingBoxCenter();
 	glm::vec3 getBoundingBoxSize();

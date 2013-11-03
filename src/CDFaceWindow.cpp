@@ -57,4 +57,8 @@ void CDFaceWindow::draw()
 }
 
 
+void CDFaceWindow::setShapeUnit( const std::string& unitName, float value )
+{
+	faceData.setShapeUnitValue(unitName, value);
+}
 
