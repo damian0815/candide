@@ -16,6 +16,7 @@
 		2D2528F718267E39004647E1 /* CDAppException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2528F518267E39004647E1 /* CDAppException.cpp */; };
 		2D2528FC182680AD004647E1 /* CDUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2528FA182680AD004647E1 /* CDUtilities.cpp */; };
 		2D25290418268713004647E1 /* candide3.wfm in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D252903182686D0004647E1 /* candide3.wfm */; };
+		2D25290A18268C3A004647E1 /* CDMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D25290818268C3A004647E1 /* CDMesh.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -50,6 +51,8 @@
 		2D2528FB182680AD004647E1 /* CDUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDUtilities.h; path = src/CDUtilities.h; sourceTree = SOURCE_ROOT; };
 		2D252900182686AE004647E1 /* CDCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDCommon.h; path = src/CDCommon.h; sourceTree = SOURCE_ROOT; };
 		2D252903182686D0004647E1 /* candide3.wfm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = candide3.wfm; path = data/candide3.wfm; sourceTree = "<group>"; };
+		2D25290818268C3A004647E1 /* CDMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDMesh.cpp; path = src/CDMesh.cpp; sourceTree = SOURCE_ROOT; };
+		2D25290918268C3A004647E1 /* CDMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDMesh.h; path = src/CDMesh.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +128,8 @@
 			children = (
 				2D2528F218267CB7004647E1 /* CDFaceData.cpp */,
 				2D2528F318267CB7004647E1 /* CDFaceData.h */,
+				2D25290818268C3A004647E1 /* CDMesh.cpp */,
+				2D25290918268C3A004647E1 /* CDMesh.h */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -203,6 +208,7 @@
 				2D2528EE18267752004647E1 /* CDFaceWindow.cpp in Sources */,
 				2D2528F718267E39004647E1 /* CDAppException.cpp in Sources */,
 				2D189B361826510B0085EBED /* main.cpp in Sources */,
+				2D25290A18268C3A004647E1 /* CDMesh.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

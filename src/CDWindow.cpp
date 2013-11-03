@@ -19,7 +19,7 @@ CDWindow::CDWindow(int w, int h, const char* label )
 	
 	CDFaceData faceData( CANDIDE_FILE_PATH );
 	
-	faceWindow = new CDFaceWindow(10,10,100,200, faceData);
+	faceWindow = new CDFaceWindow(10,10,w-20,h-20, faceData);
 	
 	
 	resizable(faceWindow);
