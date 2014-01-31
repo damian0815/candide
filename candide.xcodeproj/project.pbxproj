@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D064E85189BF95900503574 /* CDImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D064E83189BF95900503574 /* CDImageLoader.cpp */; };
 		2D13188C182652B7005624D7 /* CDApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D13188A182652B7005624D7 /* CDApp.cpp */; };
 		2D13188E18265498005624D7 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D13188D18265498005624D7 /* OpenGL.framework */; };
 		2D189B361826510B0085EBED /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D189B341826510B0085EBED /* main.cpp */; };
@@ -33,6 +34,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2D064E83189BF95900503574 /* CDImageLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDImageLoader.cpp; path = src/CDImageLoader.cpp; sourceTree = SOURCE_ROOT; };
+		2D064E84189BF95900503574 /* CDImageLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDImageLoader.h; path = src/CDImageLoader.h; sourceTree = SOURCE_ROOT; };
 		2D13188A182652B7005624D7 /* CDApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDApp.cpp; path = src/CDApp.cpp; sourceTree = SOURCE_ROOT; };
 		2D13188B182652B7005624D7 /* CDApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDApp.h; path = src/CDApp.h; sourceTree = SOURCE_ROOT; };
 		2D13188D18265498005624D7 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -106,6 +109,8 @@
 				2D2528ED18267752004647E1 /* CDFaceWindow.h */,
 				2D189B38182651430085EBED /* CDWindow.cpp */,
 				2D189B39182651430085EBED /* CDWindow.h */,
+				2D064E83189BF95900503574 /* CDImageLoader.cpp */,
+				2D064E84189BF95900503574 /* CDImageLoader.h */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -203,6 +208,7 @@
 			files = (
 				2D13188C182652B7005624D7 /* CDApp.cpp in Sources */,
 				2D2528F418267CB7004647E1 /* CDFaceData.cpp in Sources */,
+				2D064E85189BF95900503574 /* CDImageLoader.cpp in Sources */,
 				2D189B3A182651430085EBED /* CDWindow.cpp in Sources */,
 				2D2528FC182680AD004647E1 /* CDUtilities.cpp in Sources */,
 				2D2528EE18267752004647E1 /* CDFaceWindow.cpp in Sources */,
@@ -252,6 +258,8 @@
 					"-L/usr/local/lib",
 					"-lfltk",
 					"-lfltk_gl",
+					"-lfltk_images",
+					"-lpng",
 				);
 				SDKROOT = macosx;
 			};
@@ -288,6 +296,8 @@
 					"-L/usr/local/lib",
 					"-lfltk",
 					"-lfltk_gl",
+					"-lfltk_images",
+					"-lpng",
 				);
 				SDKROOT = macosx;
 			};

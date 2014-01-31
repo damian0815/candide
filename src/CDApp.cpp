@@ -10,6 +10,7 @@
 #include "CDWindow.h"
 
 #include <Fl/Fl.h>
+#include <Fl/Fl_Shared_Image.H>
 #include <assert.h>
 
 static CDApp* instance = NULL;
@@ -24,6 +25,9 @@ CDApp::CDApp( int argc, const char* argv[] )
 : faceData( CANDIDE_FILE_PATH )
 {
 	instance = this;
+	
+	// register image types
+	fl_register_images();
 }
 
 

@@ -14,6 +14,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <Fl/Fl_Choice.H>
+#include <Fl/Fl_Menu_Bar.H>
 #include <Fl/Fl_Hor_Value_Slider.H>
 
 using namespace glm;
@@ -32,16 +33,23 @@ CDWindow::CDWindow(int w, int h, const char* label, CDFaceData* faceData )
 : Fl_Window(w, h, label)
 {
 	int interfaceWidth = 300;
+	int menuHeight = 25;
+	
+	Fl_Menu_Bar* menu = new Fl_Menu_Bar(0,0,w,menuHeight);
+	menu->add("File/Quit");
+	menu->add("View/Load front image...");
+	menu->add("View/Load side image...");
+	
 	
 	// create the face windows
-	Fl_Group* faceWindows = new Fl_Group( 10, 10, w-interfaceWidth-30, h-20 );
+	Fl_Group* faceWindows = new Fl_Group( 10, menuHeight+10, w-interfaceWidth-30, h-menuHeight-20 );
 	faceWindows->clip_children(true);
 	resizable(faceWindows);
 	
 	int faceWindowGap = 5;
 	int faceWindowWidth = (w-interfaceWidth-30-faceWindowGap)/2;
-	faceWindowFront = new CDFaceWindow(10,10,faceWindowWidth,h-20, faceData);
-	faceWindowSide = new CDFaceWindow(10+faceWindowWidth+faceWindowGap,10,faceWindowWidth,h-20, faceData);
+	faceWindowFront = new CDFaceWindow(10,menuHeight+10,faceWindowWidth,h-menuHeight-20, faceData);
+	faceWindowSide = new CDFaceWindow(10+faceWindowWidth+faceWindowGap,menuHeight+10,faceWindowWidth,h-menuHeight-20, faceData);
 	// make a 90 degree rotation about the y axis
 	mat4 sideTransform = rotate(mat4(), 90.0f, vec3(0,1,0));
 	faceWindowSide->setTransform( sideTransform );
@@ -50,12 +58,12 @@ CDWindow::CDWindow(int w, int h, const char* label, CDFaceData* faceData )
 	
 	// create buttons
 	int interfaceStartX = w-interfaceWidth-10;
-	Fl_Group* interfaceElements = new Fl_Group( interfaceStartX, 10, interfaceWidth, h-20 );
+	Fl_Group* interfaceElements = new Fl_Group( interfaceStartX, 10+menuHeight, interfaceWidth, h-20 );
 	interfaceElements->resizable(0);
 	interfaceElements->clip_children(true);
 	// make a drop-down and a slider for the shape units
 	vector<string> suNames = faceData->getShapeUnitNames();
-	Fl_Choice* suDropdown = new Fl_Choice( interfaceStartX, 10, interfaceWidth, 20, "Shape Unit" );
+	Fl_Choice* suDropdown = new Fl_Choice( interfaceStartX, 10+menuHeight, interfaceWidth, 20, "Shape Unit" );
 	suDropdown->labeltype(FL_NORMAL_LABEL);
 	suDropdown->align(FL_ALIGN_LEFT);
 	suDropdown->callback(&CDWindow::_dropdownChanged, this);
@@ -66,7 +74,7 @@ CDWindow::CDWindow(int w, int h, const char* label, CDFaceData* faceData )
 	}
 	
 	if ( suNames.size()>0 ) {
-		Fl_Value_Slider* slider = new Fl_Hor_Value_Slider( interfaceStartX, 35, interfaceWidth, 20, "SUSlider" );
+		Fl_Value_Slider* slider = new Fl_Hor_Value_Slider( interfaceStartX, 35+menuHeight, interfaceWidth, 20, "SUSlider" );
 		slider->labeltype(FL_NO_LABEL);
 		slider->align(FL_ALIGN_LEFT);
 		slider->callback(&sliderCallback, this );
@@ -79,7 +87,7 @@ CDWindow::CDWindow(int w, int h, const char* label, CDFaceData* faceData )
 	}
 	
 	vector<string> auNames = faceData->getAnimationUnitNames();
-	Fl_Choice* auDropdown = new Fl_Choice( interfaceStartX, 60, interfaceWidth, 20, "Animation Unit" );
+	Fl_Choice* auDropdown = new Fl_Choice( interfaceStartX, 60+menuHeight, interfaceWidth, 20, "Animation Unit" );
 	auDropdown->align(FL_ALIGN_LEFT);
 	auDropdown->callback(&CDWindow::_dropdownChanged, this);
 	for ( const string& auName: auNames ) {
@@ -89,7 +97,7 @@ CDWindow::CDWindow(int w, int h, const char* label, CDFaceData* faceData )
 	}
 	
 	if ( auNames.size()>0 ) {
-		Fl_Value_Slider* slider = new Fl_Hor_Value_Slider( interfaceStartX, 85, interfaceWidth, 20, "AUSlider" );
+		Fl_Value_Slider* slider = new Fl_Hor_Value_Slider( interfaceStartX, 85+menuHeight, interfaceWidth, 20, "AUSlider" );
 		slider->labeltype(FL_NO_LABEL);
 		slider->align(FL_ALIGN_LEFT);
 		slider->callback(&sliderCallback, this );

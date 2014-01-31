@@ -9,12 +9,29 @@
 #include "CDFaceWindow.h"
 #include <Fl/math.h>
 #include <glm/glm.hpp>
+
+#include "CDImageLoader.h"
+
 using namespace glm;
+using namespace std;
 
 CDFaceWindow::CDFaceWindow(int x, int y, int w, int h, CDFaceData* _faceData )
 : Fl_Gl_Window(x, y, w, h, "FaceGL")
-, faceData(_faceData)
+, faceData(_faceData), backgroundTexture(0)
 {
+}
+
+CDFaceWindow::~CDFaceWindow()
+{
+	if ( backgroundTexture ) {
+		glDeleteTextures(1, &backgroundTexture);
+		backgroundTexture = 0;
+	}
+}
+
+void CDFaceWindow::setBackgroundImage( const string& path )
+{
+	backgroundTexturePath = path;
 }
 
 void CDFaceWindow::draw()
@@ -32,28 +49,55 @@ void CDFaceWindow::draw()
 		
 	}
 	
+	if ( backgroundTexture==0 && !backgroundTexturePath.empty() ) {
+		// load the texture
+		backgroundTexture = CDImageLoader::createOpenGLTextureFromImage(backgroundTexturePath, backgroundTextureW, backgroundTextureH);
+		if ( 0==backgroundTexture ) {
+			cerr<<"couldn't load texture from '"<<backgroundTexturePath<<"'"<<endl;
+			backgroundTexturePath = "";
+		}
+	}
+	
 	glClearColor(0,0,0,0 );
 	glClear( GL_COLOR_BUFFER_BIT );
 	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	glLoadMatrixf(&transform[0][0]);
 	
 	glEnable(GL_BLEND);
-	
 	glColor4f(1,1,1,0.5);
-	faceData->draw(vec3(0,0,0), vec3(0.95,0.95,0.95));
 	
-/*
-	
-	glColor4f(.5,.6,.7,.3);
-	glBegin(GL_POLYGON);
-	int sides = 3;
-	for (int j=0; j<sides; j++) {
-		double ang = j*2*M_PI/sides;
-		glVertex3f(cos(ang),sin(ang),0);
+	if ( backgroundTexture ) {
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, backgroundTexture);
+		
+		// draw the background image
+		
+		float imageAspect = ((float)backgroundTextureW/(float)backgroundTextureH);
+		GLfloat imageW = 1.0f*imageAspect;
+		GLfloat imageH = 1.0f;
+		
+		glBegin(GL_QUADS);
+		glVertex2f(imageW/2, -imageH/2);
+		glTexCoord2f(0, 1);
+		glVertex2f(-imageW/2, -imageH/2);
+		glTexCoord2f(0, 0);
+		glVertex2f(-imageW/2, imageH/2);
+		glTexCoord2f(1, 0);
+		glVertex2f(imageW/2, imageH/2);
+		glTexCoord2f(1, 1);
+		glEnd();
+		
+		glDisable(GL_TEXTURE_2D);
 	}
-	glEnd();*/
+		
+	// draw the actual facedata
+
+	
+	glLoadMatrixf(&transform[0][0]);
+	faceData->draw(vec3(0,0,0), vec3(0.95,0.95,0.95));
+
+	
 	
 }
 

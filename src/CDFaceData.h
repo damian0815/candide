@@ -59,7 +59,6 @@ public:
 private:
 	
 	CDMesh getDistortedMesh();
-	
 	void load( const std::string& path );
 	
 	/// returns npos if not found

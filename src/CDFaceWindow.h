@@ -19,10 +19,15 @@
 
 #include "CDFaceData.h"
 
+
+
 class CDFaceWindow : public Fl_Gl_Window
 {
 public:
 	CDFaceWindow( int x, int y, int w, int h, CDFaceData* faceData);
+	~CDFaceWindow();
+	
+	void setBackgroundImage( const std::string& pngFilename );
 	
 	void setTransform( glm::mat4 _transform ) { transform = _transform; }
 	void draw();
@@ -31,6 +36,10 @@ protected:
 	
 private:
 	CDFaceData* faceData;
+	
+	std::string backgroundTexturePath;
+	GLuint backgroundTexture;
+	int backgroundTextureW, backgroundTextureH;
 	
 	glm::mat4 transform;
 };
