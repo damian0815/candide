@@ -36,7 +36,7 @@
 		2D13188A182652B7005624D7 /* CDApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDApp.cpp; path = src/CDApp.cpp; sourceTree = SOURCE_ROOT; };
 		2D13188B182652B7005624D7 /* CDApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDApp.h; path = src/CDApp.h; sourceTree = SOURCE_ROOT; };
 		2D13188D18265498005624D7 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		2D189B28182650D60085EBED /* candide */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = candide; path = Candide; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D189B28182650D60085EBED /* Candide */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Candide; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D189B341826510B0085EBED /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
 		2D189B351826510B0085EBED /* shape.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shape.cxx; path = src/shape.cxx; sourceTree = SOURCE_ROOT; };
 		2D189B38182651430085EBED /* CDWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDWindow.cpp; path = src/CDWindow.cpp; sourceTree = SOURCE_ROOT; };
@@ -80,7 +80,7 @@
 		2D189B29182650D60085EBED /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2D189B28182650D60085EBED /* candide */,
+				2D189B28182650D60085EBED /* Candide */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -167,7 +167,7 @@
 			);
 			name = Candide;
 			productName = candide;
-			productReference = 2D189B28182650D60085EBED /* candide */;
+			productReference = 2D189B28182650D60085EBED /* Candide */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */

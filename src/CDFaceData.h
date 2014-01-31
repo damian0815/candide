@@ -47,8 +47,14 @@ public:
 
 	void draw( const glm::vec3& centerPos, const glm::vec3& fitSize );
 	
+	std::vector<std::string> getAnimationUnitNames();
 	std::vector<std::string> getShapeUnitNames();
-	void setShapeUnitValue( std::string suName, float value );
+	
+	float getAnimationUnitValue( const std::string& auName );
+	void setAnimationUnitValue( const std::string& auName, float value );
+	
+	float getShapeUnitValue( const std::string& suName );
+	void setShapeUnitValue( const std::string &suName, float value );
 	
 private:
 	
@@ -58,6 +64,7 @@ private:
 	
 	/// returns npos if not found
 	size_t getIndexOfShapeUnit( const std::string& name );
+	size_t getIndexOfAnimationUnit( const std::string& name );
 
 	// data
 	CDMesh meshAtRest;

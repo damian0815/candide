@@ -11,7 +11,7 @@
 #include <glm/glm.hpp>
 using namespace glm;
 
-CDFaceWindow::CDFaceWindow(int x, int y, int w, int h, const CDFaceData& _faceData )
+CDFaceWindow::CDFaceWindow(int x, int y, int w, int h, CDFaceData* _faceData )
 : Fl_Gl_Window(x, y, w, h, "FaceGL")
 , faceData(_faceData)
 {
@@ -37,11 +37,12 @@ void CDFaceWindow::draw()
 	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+	glLoadMatrixf(&transform[0][0]);
 	
 	glEnable(GL_BLEND);
 	
 	glColor4f(1,1,1,0.5);
-	faceData.draw(vec3(0,0,0), vec3(0.95,0.95,0.95));
+	faceData->draw(vec3(0,0,0), vec3(0.95,0.95,0.95));
 	
 /*
 	
@@ -56,9 +57,4 @@ void CDFaceWindow::draw()
 	
 }
 
-
-void CDFaceWindow::setShapeUnit( const std::string& unitName, float value )
-{
-	faceData.setShapeUnitValue(unitName, value);
-}
 

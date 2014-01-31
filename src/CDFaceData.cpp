@@ -102,7 +102,7 @@ static void loadDistortionUnit( CDFaceDistortionUnit& unit, ifstream& infile )
 		int v;
 		float x, y, z;
 		line >> v >> x >> y >> z;
-		CDLog << v <<": " <<x<<","<<y<<","<<z;
+		//CDLog << v <<": " <<x<<","<<y<<","<<z;
 		unit.addVertexOffset(v,vec3(x,y,z));
 	}
 }
@@ -225,6 +225,15 @@ void CDFaceData::draw( const vec3& center, const vec3& fitSize )
 	glPopMatrix();
 }
 
+vector<string> CDFaceData::getAnimationUnitNames()
+{
+	vector<string> names;
+	for ( const auto au: animationUnits ) {
+		names.push_back(au.getName());
+	}
+	return names;
+}
+
 vector<string> CDFaceData::getShapeUnitNames()
 {
 	vector<string> names;
@@ -244,22 +253,57 @@ size_t CDFaceData::getIndexOfShapeUnit(const std::string &name)
 	throw CDAppException("shape unit "+name+" not found");
 }
 
-void CDFaceData::setShapeUnitValue( std::string suName, float value )
+size_t CDFaceData::getIndexOfAnimationUnit(const std::string &name)
+{
+	for ( int i=0; i<animationUnits.size(); i++ ) {
+		if ( name == animationUnits[i].getName() ) {
+			return i;
+		}
+	}
+	throw CDAppException("animation unit "+name+" not found");
+}
+
+float CDFaceData::getAnimationUnitValue( const std::string& auName )
+{
+	size_t idx = getIndexOfAnimationUnit(auName);
+	return animationUnitSettings[idx];
+}
+
+float CDFaceData::getShapeUnitValue( const std::string& suName )
+{
+	size_t idx = getIndexOfShapeUnit(suName);
+	return shapeUnitSettings[idx];
+}
+
+void CDFaceData::setShapeUnitValue( const std::string& suName, float value )
 {
 	size_t idx = getIndexOfShapeUnit(suName);
 	shapeUnitSettings[idx] = value;
 }
 
+void CDFaceData::setAnimationUnitValue( const std::string &auName, float value)
+{
+	size_t idx = getIndexOfAnimationUnit(auName);
+	animationUnitSettings[idx] = value;
+}
+
 
 CDMesh CDFaceData::getDistortedMesh()
 {
-	// apply the shape units to a copy
+	// apply the shape units to a copy of the undistorted mesh
 	CDMesh distorted = meshAtRest;
 	
 	for ( const auto it: shapeUnitSettings ) {
 		size_t unitIdx = it.first;
 		float amount = it.second;
 		const CDFaceDistortionUnit& unit = shapeUnits.at(unitIdx);
+		unit.apply(amount,distorted);
+	}
+	
+	for ( const auto it: animationUnitSettings ) {
+		size_t unitIdx = it.first;
+		float amount = it.second;
+		const CDFaceDistortionUnit& unit = animationUnits.at(unitIdx);
 		unit.apply(amount,distorted);
 	}
 	

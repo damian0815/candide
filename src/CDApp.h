@@ -10,6 +10,9 @@
 #define __candide__CandideApp__
 
 #include <iostream>
+#include "CDFaceData.h"
+
+static const std::string CANDIDE_FILE_PATH = "candide3.wfm";
 
 class CDApp
 {
@@ -18,9 +21,13 @@ public:
 	
 	static CDApp* getInstance();
 	
+	CDFaceData& getFaceData() { return faceData; }
+	
 	int run();
 	
 private:
+	
+	CDFaceData faceData;
 	
 };
 

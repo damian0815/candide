@@ -21,6 +21,7 @@ CDApp* CDApp::getInstance()
 }
 
 CDApp::CDApp( int argc, const char* argv[] )
+: faceData( CANDIDE_FILE_PATH )
 {
 	instance = this;
 }
@@ -38,7 +39,7 @@ static void exitCallback( Fl_Widget* widget )
 
 int CDApp::run()
 {
-	CDWindow window(300,330,"Candide");
+	CDWindow window(500,330,"Candide", &faceData);
 
 	
 	window.callback(&exitCallback);

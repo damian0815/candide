@@ -15,22 +15,24 @@
 #include <FL/gl.h>
 #include <FL/Fl_Gl_Window.h>
 
+#include <glm/glm.hpp>
 
 #include "CDFaceData.h"
 
 class CDFaceWindow : public Fl_Gl_Window
 {
 public:
-	CDFaceWindow( int x, int y, int w, int h, const CDFaceData& faceData);
+	CDFaceWindow( int x, int y, int w, int h, CDFaceData* faceData);
 	
+	void setTransform( glm::mat4 _transform ) { transform = _transform; }
 	void draw();
-	
-	void setShapeUnit( const std::string& unitName, float value );
 	
 protected:
 	
 private:
-	CDFaceData faceData;
+	CDFaceData* faceData;
+	
+	glm::mat4 transform;
 };
 
 #endif /* defined(__candide__FaceWindow__) */
