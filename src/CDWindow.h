@@ -13,7 +13,11 @@
 #include <FL/Fl.H>
 #include <FL/Fl_Window.H>
 
+#include "picojson.h"
+
 class Fl_Value_Slider;
+class Fl_Menu_Bar;
+class Fl_Menu_Item;
 
 #include "CDFaceWindow.h"
 
@@ -25,10 +29,16 @@ public:
 	
 	void resize( int x, int y, int w, int h);
 	
-	
-	void sliderChanged( std::string sliderName, double newValue );
-	
+	picojson::value serialize();
+	void deserialize( const picojson::value& source );
+
 private:
+	void sliderChanged( std::string sliderName, double newValue );
+	static void _sliderChanged( Fl_Widget* widget, void* param );
+	
+	void menuChanged( Fl_Menu_Bar* menu, const Fl_Menu_Item* selectedItem );
+	static void _menuChanged( Fl_Widget* widget, void* param );
+	
 	void dropdownChanged( std::string dropdownName, int index );
 	static void _dropdownChanged( Fl_Widget* widget, void* param );
 

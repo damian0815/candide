@@ -28,6 +28,9 @@ CDApp::CDApp( int argc, const char* argv[] )
 	
 	// register image types
 	fl_register_images();
+	
+	// setup OpenGL
+	Fl::gl_visual(FL_RGB);
 }
 
 
@@ -43,7 +46,7 @@ static void exitCallback( Fl_Widget* widget )
 
 int CDApp::run()
 {
-	CDWindow window(500,330,"Candide", &faceData);
+	CDWindow window(1000,630,"Candide", &faceData);
 
 	
 	window.callback(&exitCallback);

@@ -39,6 +39,7 @@
 		2D13188A182652B7005624D7 /* CDApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDApp.cpp; path = src/CDApp.cpp; sourceTree = SOURCE_ROOT; };
 		2D13188B182652B7005624D7 /* CDApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDApp.h; path = src/CDApp.h; sourceTree = SOURCE_ROOT; };
 		2D13188D18265498005624D7 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		2D15B75B189D71D70069BF4A /* picojson.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = picojson.h; path = src/picojson.h; sourceTree = SOURCE_ROOT; };
 		2D189B28182650D60085EBED /* Candide */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Candide; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D189B341826510B0085EBED /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
 		2D189B351826510B0085EBED /* shape.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shape.cxx; path = src/shape.cxx; sourceTree = SOURCE_ROOT; };
@@ -118,6 +119,7 @@
 		2D2528FE182680C5004647E1 /* Glue */ = {
 			isa = PBXGroup;
 			children = (
+				2D15B75B189D71D70069BF4A /* picojson.h */,
 				2D252900182686AE004647E1 /* CDCommon.h */,
 				2D2528F518267E39004647E1 /* CDAppException.cpp */,
 				2D2528F618267E39004647E1 /* CDAppException.h */,

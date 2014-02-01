@@ -7,8 +7,7 @@
 //
 
 #include "CDWindow.h"
-#include "CDCommon.h"
-#include "CDApp.h"
+#include <fstream>
 #include <math.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -16,16 +15,30 @@
 #include <Fl/Fl_Choice.H>
 #include <Fl/Fl_Menu_Bar.H>
 #include <Fl/Fl_Hor_Value_Slider.H>
+#include <Fl/Fl_Native_File_Chooser.H>
+
+#include "CDCommon.h"
+#include "CDApp.h"
 
 using namespace glm;
 using namespace std;
+using namespace picojson;
 
-static void sliderCallback(Fl_Widget* widget, void* userData)
+void CDWindow::_sliderChanged(Fl_Widget* widget, void* userData)
 {
 	CDWindow* cdWindow = static_cast<CDWindow*>(userData);
 	if ( cdWindow ) {
 		Fl_Slider* slider = dynamic_cast<Fl_Slider*>(widget);
 		cdWindow->sliderChanged( slider->label(), slider->value() );
+	}
+}
+
+void CDWindow::_menuChanged(Fl_Widget* widget, void* userData)
+{
+	CDWindow* cdWindow = static_cast<CDWindow*>(userData);
+	if ( cdWindow ) {
+		Fl_Menu_Bar* menu = dynamic_cast<Fl_Menu_Bar*>(widget);
+		cdWindow->menuChanged( menu, menu->mvalue() );
 	}
 }
 
@@ -36,6 +49,10 @@ CDWindow::CDWindow(int w, int h, const char* label, CDFaceData* faceData )
 	int menuHeight = 25;
 	
 	Fl_Menu_Bar* menu = new Fl_Menu_Bar(0,0,w,menuHeight);
+	menu->callback(&CDWindow::_menuChanged, this);
+	menu->add("File/Open");
+	menu->add("File/Save as...");
+	menu->add("File/");
 	menu->add("File/Quit");
 	menu->add("View/Load front image...");
 	menu->add("View/Load side image...");
@@ -52,7 +69,7 @@ CDWindow::CDWindow(int w, int h, const char* label, CDFaceData* faceData )
 	faceWindowSide = new CDFaceWindow(10+faceWindowWidth+faceWindowGap,menuHeight+10,faceWindowWidth,h-menuHeight-20, faceData);
 	// make a 90 degree rotation about the y axis
 	mat4 sideTransform = rotate(mat4(), 90.0f, vec3(0,1,0));
-	faceWindowSide->setTransform( sideTransform );
+	faceWindowSide->setModelTransform( sideTransform );
 	
 	faceWindows->end();
 	
@@ -77,7 +94,7 @@ CDWindow::CDWindow(int w, int h, const char* label, CDFaceData* faceData )
 		Fl_Value_Slider* slider = new Fl_Hor_Value_Slider( interfaceStartX, 35+menuHeight, interfaceWidth, 20, "SUSlider" );
 		slider->labeltype(FL_NO_LABEL);
 		slider->align(FL_ALIGN_LEFT);
-		slider->callback(&sliderCallback, this );
+		slider->callback(&CDWindow::_sliderChanged, this );
 		slider->value(0);
 		slider->bounds(-1,1);
 		shapeUnitSlider = slider;
@@ -100,7 +117,7 @@ CDWindow::CDWindow(int w, int h, const char* label, CDFaceData* faceData )
 		Fl_Value_Slider* slider = new Fl_Hor_Value_Slider( interfaceStartX, 85+menuHeight, interfaceWidth, 20, "AUSlider" );
 		slider->labeltype(FL_NO_LABEL);
 		slider->align(FL_ALIGN_LEFT);
-		slider->callback(&sliderCallback, this );
+		slider->callback(&CDWindow::_sliderChanged, this );
 		slider->value(0);
 		slider->bounds(-1,1);
 		animationUnitSlider = slider;
@@ -114,6 +131,10 @@ CDWindow::CDWindow(int w, int h, const char* label, CDFaceData* faceData )
 	
 	
 	end();
+
+	// force windows to get redrawn
+	faceWindowFront->redraw();
+	faceWindowSide->redraw();
 }
 
 CDWindow::~CDWindow()
@@ -165,4 +186,125 @@ void CDWindow::sliderChanged( string sliderName, double newValue )
 	faceWindowFront->redraw();
 	faceWindowSide->redraw();
 }
+
+void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
+{
+	string selection = selectedItem->label();
+	
+	if ( selection == "Load front image..." || selection == "Load side image..." ) {
+		Fl_Native_File_Chooser fnfc;
+		fnfc.title("Select image");
+		fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
+		fnfc.filter("Images\t*.{png,jpg,jpeg}");
+		// show
+		string selectedFile = "";
+		switch( fnfc.show() ) {
+			case -1:
+				throw new CDAppException(fnfc.errmsg());
+			case 1:
+				break;
+			default:
+				selectedFile = fnfc.filename();
+		}
+		
+		if ( selectedFile.size() ) {
+			if ( selection == "Load front image..." ) {
+				faceWindowFront->setBackgroundImage(selectedFile);
+			} else {
+				faceWindowSide->setBackgroundImage(selectedFile);
+			}
+		}
+	}
+	
+	else if ( selection == "Save as..." ) {
+		Fl_Native_File_Chooser fnfc;
+		fnfc.title("Save as...");
+		fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+		fnfc.filter("Candide files\t*.candide");
+		// show
+		string path = "";
+		switch( fnfc.show() ) {
+			case -1:
+				throw new CDAppException(fnfc.errmsg());
+			case 1:
+				break;
+			default:
+				path = fnfc.filename();
+		}
+		
+		if ( path.size() ) {
+			
+			string forceExtension = ".candide";
+			if ( path.size()<forceExtension.size() || path.substr(path.size()-forceExtension.size())!=forceExtension ) {
+				path += forceExtension;
+			}
+			
+			// serialize
+			value root = serialize();
+			
+			ofstream outfile(path);
+			outfile << root.serialize();
+			
+			outfile.close();
+			
+		}
+		
+	}
+	
+	else if ( selection == "Open" ) {
+		Fl_Native_File_Chooser fnfc;
+		fnfc.title("Open");
+		fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
+		fnfc.filter("Candide files\t*.candide");
+		// show
+		string path = "";
+		switch( fnfc.show() ) {
+			case -1:
+				throw new CDAppException(fnfc.errmsg());
+			case 1:
+				break;
+			default:
+				path = fnfc.filename();
+		}
+		
+		if ( path.size() ) {
+			ifstream infile(path);
+			value root;
+			infile >> root;
+			infile.close();
+			
+			deserialize(root);
+		}
+	}
+	
+	else if ( selection == "Quit" ) {
+		exit(0);
+	}
+		
+}
+
+
+value CDWindow::serialize()
+{
+	object root;
+	
+	root["faceData"] = CDApp::getInstance()->getFaceData().serialize();
+	
+	root["frontWindow"] = faceWindowFront->serialize();
+	root["sideWindow"] = faceWindowSide->serialize();
+
+	return value(root);
+}
+
+void CDWindow::deserialize( const value& source )
+{
+	object root = source.get<object>();
+	
+	CDApp::getInstance()->getFaceData().deserialize(root["faceData"]);
+	
+	faceWindowFront->deserialize(root["frontWindow"]);
+	faceWindowSide->deserialize(root["sideWindow"]);
+	
+}
+
 

@@ -14,6 +14,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include "picojson.h"
 
 #include "CDMesh.h"
 
@@ -45,7 +46,8 @@ public:
 	CDFaceData( const std::string &path );
 	
 
-	void draw( const glm::vec3& centerPos, const glm::vec3& fitSize );
+	void calculateCompensatoryTranslateScale( const glm::vec3& centerPos, const glm::vec3& fitSize, glm::vec3 &tranlateOut, float &scaleOut );
+	void draw();
 	
 	std::vector<std::string> getAnimationUnitNames();
 	std::vector<std::string> getShapeUnitNames();
@@ -55,6 +57,9 @@ public:
 	
 	float getShapeUnitValue( const std::string& suName );
 	void setShapeUnitValue( const std::string &suName, float value );
+	
+	void deserialize( const picojson::value& source );
+	picojson::value serialize();
 	
 private:
 	

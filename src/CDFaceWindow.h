@@ -16,6 +16,7 @@
 #include <FL/Fl_Gl_Window.h>
 
 #include <glm/glm.hpp>
+#include "picojson.h"
 
 #include "CDFaceData.h"
 
@@ -27,10 +28,16 @@ public:
 	CDFaceWindow( int x, int y, int w, int h, CDFaceData* faceData);
 	~CDFaceWindow();
 	
+	void deserialize( const picojson::value& source );
+	picojson::value serialize();
+	
 	void setBackgroundImage( const std::string& pngFilename );
 	
-	void setTransform( glm::mat4 _transform ) { transform = _transform; }
+	void setModelTransform( glm::mat4 _transform ) { transform = _transform; }
 	void draw();
+	
+	/*! @abstract Handle mouse clicks (from Fl_Gl_Window) */
+	int handle(int code);
 	
 protected:
 	
@@ -42,6 +49,11 @@ private:
 	int backgroundTextureW, backgroundTextureH;
 	
 	glm::mat4 transform;
+	
+	glm::vec3 bgImageTranslate;
+	float bgImageScale;
+	
+	glm::vec2 dragPrev;
 };
 
 #endif /* defined(__candide__FaceWindow__) */

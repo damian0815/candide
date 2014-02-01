@@ -11,6 +11,8 @@
 
 #include <iostream>
 #include <sstream>
+#include <glm/glm.hpp>
+#include "picojson.h"
 
 #define CDLog CDLogInternal() << __PRETTY_FUNCTION__ << ": "
 //#define CDLogErr CDLogInternal << __PRETTY_FUNCTION__ << ": error: "
@@ -32,6 +34,11 @@ public:
 private:
     std::ostringstream logText;
 };
+
+
+picojson::value picojson_encodeVector3( const glm::vec3& vec );
+glm::vec3 picojson_decodeVector3( const picojson::value& source );
+
 
 
 #endif /* defined(__candide__CDUtilities__) */

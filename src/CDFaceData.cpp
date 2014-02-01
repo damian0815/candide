@@ -19,6 +19,7 @@
 
 using namespace std;
 using namespace glm;
+using namespace picojson;
 
 CDFaceDistortionUnit::CDFaceDistortionUnit( const string& _name )
 : name(_name)
@@ -194,18 +195,15 @@ void CDFaceData::load( const string& path )
 	
 }
 
-
-void CDFaceData::draw( const vec3& center, const vec3& fitSize )
+void CDFaceData::calculateCompensatoryTranslateScale( const vec3& center, const vec3& fitSize, vec3& translateOut, float& scaleOut )
 {
-	glPushMatrix();
-	
 	CDMesh mesh = getDistortedMesh();
 	
 	// translate
 	vec3 meshCenter = mesh.getBoundingBoxCenter();
 	vec3 targetCenter = center;
 	vec3 compensate = targetCenter-meshCenter;
-	glTranslatef(compensate.x,compensate.y,compensate.z);
+	translateOut = compensate;
 	
 	// work out a scale
 	vec3 size = mesh.getBoundingBoxSize();
@@ -218,11 +216,13 @@ void CDFaceData::draw( const vec3& center, const vec3& fitSize )
 		// double the scale since we are scaling a box, or something
 		scale *= 2.0f;
 	}
-	glScalef(scale,scale,scale);
-	
-	mesh.draw();
-	
-	glPopMatrix();
+	scaleOut = scale;
+}
+
+
+void CDFaceData::draw()
+{
+	getDistortedMesh().draw();
 }
 
 vector<string> CDFaceData::getAnimationUnitNames()
@@ -308,5 +308,65 @@ CDMesh CDFaceData::getDistortedMesh()
 	}
 	
 	return distorted;
+}
+
+#pragma mark - serialization
+
+void CDFaceData::deserialize( const picojson::value& source )
+{
+	object root = source.get<object>();
+	
+	// clear existing
+	shapeUnitSettings.clear();
+	animationUnitSettings.clear();
+	
+	// load shape units
+	object shapeUnitSettingsSer = root["shapeUnits"].get<object>();
+	for ( const auto it: shapeUnitSettingsSer ) {
+		string unitName = it.first;
+		float setting = it.second.get<double>();
+		setShapeUnitValue(unitName, setting);
+	}
+		
+	// load animation units
+	object animationUnitSettingsSer = root["animationUnits"].get<object>();
+	for ( const auto it: animationUnitSettingsSer ) {
+		string unitName = it.first;
+		float setting = it.second.get<double>();
+		setAnimationUnitValue(unitName, setting);
+	}
+		
+}
+
+picojson::value CDFaceData::serialize()
+{
+	object root;
+	
+	// serialize shape units
+	object shapeUnitSettingsSer;
+	for ( const auto it: shapeUnitSettings ) {
+		// convert index to name
+		size_t whichUnit = it.first;
+		string unitName = shapeUnits.at(whichUnit).getName();
+
+		float setting = it.second;
+		shapeUnitSettingsSer[unitName] = value(setting);
+	}
+	root["shapeUnits"] = value(shapeUnitSettingsSer);
+	
+	// serialize animation units
+	object animationUnitSettingsSer;
+	for ( const auto it: animationUnitSettings ) {
+		// convert index to name
+		size_t whichUnit = it.first;
+		string unitName = animationUnits.at(whichUnit).getName();
+
+		float setting = it.second;
+		animationUnitSettingsSer[unitName] = value(setting);
+	}
+	
+	root["animationUnits"] = value(animationUnitSettingsSer);
+	
+	return value(root);
 }
 
