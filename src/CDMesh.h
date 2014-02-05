@@ -21,13 +21,15 @@ class CDMesh
 	friend class CDFaceDistortionUnit;
 	
 public:
-	CDMesh(): wireframe(true) {};
+	CDMesh() {};
 	
 	void clear() { vertices.clear(); triangles.clear(); }
 	
 	void addVertex( const glm::vec3 &v ) { vertices.push_back(v); }
+	void addVertexNormal( const glm::vec3 &v ) { vertexNormals.push_back(v); }
 	void addFace( int v0, int v1, int v2 );
-	void draw();
+	
+	void draw( bool wireframe );
 	
 	struct Triangle {
 		GLushort v[3];
@@ -43,9 +45,8 @@ public:
 
 private:
 	
-	
-	bool wireframe;
 	std::vector<glm::vec3> vertices;
+	std::vector<glm::vec3> vertexNormals;
 	std::vector<Triangle> triangles;
 	
 };

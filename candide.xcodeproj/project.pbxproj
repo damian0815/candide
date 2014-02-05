@@ -10,6 +10,7 @@
 		2D064E85189BF95900503574 /* CDImageLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D064E83189BF95900503574 /* CDImageLoader.cpp */; };
 		2D13188C182652B7005624D7 /* CDApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D13188A182652B7005624D7 /* CDApp.cpp */; };
 		2D13188E18265498005624D7 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D13188D18265498005624D7 /* OpenGL.framework */; };
+		2D15B76718A037E00069BF4A /* CDAssimpLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D15B76518A037E00069BF4A /* CDAssimpLoader.cpp */; };
 		2D189B361826510B0085EBED /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D189B341826510B0085EBED /* main.cpp */; };
 		2D189B3A182651430085EBED /* CDWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D189B38182651430085EBED /* CDWindow.cpp */; };
 		2D2528EE18267752004647E1 /* CDFaceWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2528EC18267752004647E1 /* CDFaceWindow.cpp */; };
@@ -40,6 +41,8 @@
 		2D13188B182652B7005624D7 /* CDApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDApp.h; path = src/CDApp.h; sourceTree = SOURCE_ROOT; };
 		2D13188D18265498005624D7 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		2D15B75B189D71D70069BF4A /* picojson.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = picojson.h; path = src/picojson.h; sourceTree = SOURCE_ROOT; };
+		2D15B76518A037E00069BF4A /* CDAssimpLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDAssimpLoader.cpp; path = src/CDAssimpLoader.cpp; sourceTree = SOURCE_ROOT; };
+		2D15B76618A037E00069BF4A /* CDAssimpLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDAssimpLoader.h; path = src/CDAssimpLoader.h; sourceTree = SOURCE_ROOT; };
 		2D189B28182650D60085EBED /* Candide */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Candide; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D189B341826510B0085EBED /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = src/main.cpp; sourceTree = SOURCE_ROOT; };
 		2D189B351826510B0085EBED /* shape.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shape.cxx; path = src/shape.cxx; sourceTree = SOURCE_ROOT; };
@@ -137,6 +140,8 @@
 				2D2528F318267CB7004647E1 /* CDFaceData.h */,
 				2D25290818268C3A004647E1 /* CDMesh.cpp */,
 				2D25290918268C3A004647E1 /* CDMesh.h */,
+				2D15B76518A037E00069BF4A /* CDAssimpLoader.cpp */,
+				2D15B76618A037E00069BF4A /* CDAssimpLoader.h */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -214,6 +219,7 @@
 				2D189B3A182651430085EBED /* CDWindow.cpp in Sources */,
 				2D2528FC182680AD004647E1 /* CDUtilities.cpp in Sources */,
 				2D2528EE18267752004647E1 /* CDFaceWindow.cpp in Sources */,
+				2D15B76718A037E00069BF4A /* CDAssimpLoader.cpp in Sources */,
 				2D2528F718267E39004647E1 /* CDAppException.cpp in Sources */,
 				2D189B361826510B0085EBED /* main.cpp in Sources */,
 				2D25290A18268C3A004647E1 /* CDMesh.cpp in Sources */,
@@ -262,6 +268,7 @@
 					"-lfltk_gl",
 					"-lfltk_images",
 					"-lpng",
+					"-lassimp",
 				);
 				SDKROOT = macosx;
 			};
@@ -300,6 +307,7 @@
 					"-lfltk_gl",
 					"-lfltk_images",
 					"-lpng",
+					"-lassimp",
 				);
 				SDKROOT = macosx;
 			};

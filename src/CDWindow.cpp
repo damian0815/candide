@@ -56,6 +56,7 @@ CDWindow::CDWindow(int w, int h, const char* label, CDFaceData* faceData )
 	menu->add("File/Quit");
 	menu->add("View/Load front image...");
 	menu->add("View/Load side image...");
+	menu->add("View/Load 3d model...");
 	
 	
 	// create the face windows
@@ -187,25 +188,32 @@ void CDWindow::sliderChanged( string sliderName, double newValue )
 	faceWindowSide->redraw();
 }
 
+static string showFileChooser( const string& title, enum Fl_Native_File_Chooser::Type type, const string& filter )
+{
+	Fl_Native_File_Chooser fnfc;
+	fnfc.title(title.c_str());
+	fnfc.type(type);
+	fnfc.filter(filter.c_str());
+	// show
+	string selectedFile = "";
+	switch( fnfc.show() ) {
+		case -1:
+			throw new CDAppException(fnfc.errmsg());
+		case 1:
+			break;
+		default:
+			selectedFile = fnfc.filename();
+	}
+	
+	return selectedFile;
+}
+
 void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 {
 	string selection = selectedItem->label();
 	
 	if ( selection == "Load front image..." || selection == "Load side image..." ) {
-		Fl_Native_File_Chooser fnfc;
-		fnfc.title("Select image");
-		fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
-		fnfc.filter("Images\t*.{png,jpg,jpeg}");
-		// show
-		string selectedFile = "";
-		switch( fnfc.show() ) {
-			case -1:
-				throw new CDAppException(fnfc.errmsg());
-			case 1:
-				break;
-			default:
-				selectedFile = fnfc.filename();
-		}
+		string selectedFile = showFileChooser( "Select image", Fl_Native_File_Chooser::BROWSE_FILE, "Images\t*.{ping,jpg,jpeg}");
 		
 		if ( selectedFile.size() ) {
 			if ( selection == "Load front image..." ) {
@@ -215,23 +223,18 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 			}
 		}
 	}
-	
-	else if ( selection == "Save as..." ) {
-		Fl_Native_File_Chooser fnfc;
-		fnfc.title("Save as...");
-		fnfc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
-		fnfc.filter("Candide files\t*.candide");
-		// show
-		string path = "";
-		switch( fnfc.show() ) {
-			case -1:
-				throw new CDAppException(fnfc.errmsg());
-			case 1:
-				break;
-			default:
-				path = fnfc.filename();
+	else if ( selection == "Load 3d model..." ) {
+		string selectedFile = showFileChooser( "Select 3d model", Fl_Native_File_Chooser::BROWSE_FILE, "3D Models\t*.{3ds,obj,dae,blend,ase,ifc,xgl,zgl,ply,dxf,lwo,lws,lxo,stl,x,ac,ms3d,cob,scn");
+		
+		if ( selectedFile.size() ) {
+			faceWindowFront->loadBackground3DModel(selectedFile);
+			faceWindowSide->setBackground3DModel(faceWindowFront->getBackground3DModel());
 		}
 		
+	}
+	
+	else if ( selection == "Save as..." ) {
+		string path = showFileChooser("Save as...", Fl_Native_File_Chooser::BROWSE_SAVE_FILE, "Candide files\t*.candide");
 		if ( path.size() ) {
 			
 			string forceExtension = ".candide";
@@ -252,21 +255,7 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 	}
 	
 	else if ( selection == "Open" ) {
-		Fl_Native_File_Chooser fnfc;
-		fnfc.title("Open");
-		fnfc.type(Fl_Native_File_Chooser::BROWSE_FILE);
-		fnfc.filter("Candide files\t*.candide");
-		// show
-		string path = "";
-		switch( fnfc.show() ) {
-			case -1:
-				throw new CDAppException(fnfc.errmsg());
-			case 1:
-				break;
-			default:
-				path = fnfc.filename();
-		}
-		
+		string path = showFileChooser("Open", Fl_Native_File_Chooser::BROWSE_FILE, "Candide files\t*.candide");
 		if ( path.size() ) {
 			ifstream infile(path);
 			value root;

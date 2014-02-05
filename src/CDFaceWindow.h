@@ -33,6 +33,13 @@ public:
 	
 	void setBackgroundImage( const std::string& pngFilename );
 	
+	/*! @abstract Use model as background 3D model. Does not take ownership. */
+	void setBackground3DModel( CDMesh* model );
+	/*! @abstract Load model and take ownership. */
+	void loadBackground3DModel( const std::string& modelFilename );
+	/*! @abstract Return background model without changing ownership. */
+	CDMesh* getBackground3DModel() { return backgroundMesh; }
+	
 	void setModelTransform( glm::mat4 _transform ) { transform = _transform; }
 	void draw();
 	
@@ -43,6 +50,9 @@ protected:
 	
 private:
 	CDFaceData* faceData;
+	
+	CDMesh* backgroundMesh;
+	bool ownsBackgroundMesh;
 	
 	std::string backgroundTexturePath;
 	GLuint backgroundTexture;

@@ -22,7 +22,7 @@ void CDMesh::addFace( int v0, int v1, int v2 )
 	
 }
 
-void CDMesh::draw()
+void CDMesh::draw( bool wireframe )
 {
 	
 	/*
@@ -43,6 +43,12 @@ void CDMesh::draw()
 	glEnableClientState( GL_VERTEX_ARRAY );
 	glVertexPointer(3, GL_FLOAT, 0, &vertices[0][0] );
 	
+	bool doNormals = vertexNormals.size()==vertices.size();
+	if ( doNormals ) {
+		glEnableClientState(GL_NORMAL_ARRAY);
+		glNormalPointer(3, GL_FLOAT, &vertexNormals[0][0] );
+	}
+	
 	if ( wireframe ) {
 		short lines[triangles.size()*3*2];
 		for ( int i=0; i<triangles.size(); i++ ) {
@@ -59,6 +65,9 @@ void CDMesh::draw()
 	}
 	
 	glDisableClientState( GL_VERTEX_ARRAY );
+	if ( doNormals ) {
+		glDisableClientState(GL_NORMAL_ARRAY);
+	}
 }
 
 void CDMesh::getBoundingBox( vec3& minCorner, vec3& maxCorner )

@@ -13,6 +13,7 @@
 
 #include "CDUtilities.h"
 #include "CDImageLoader.h"
+#include "CDAssimpLoader.h"
 
 using namespace glm;
 using namespace std;
@@ -20,7 +21,7 @@ using namespace picojson;
 
 CDFaceWindow::CDFaceWindow(int x, int y, int w, int h, CDFaceData* _faceData )
 : Fl_Gl_Window(x, y, w, h, "FaceGL")
-, faceData(_faceData), backgroundTexture(0), bgImageScale(1.0f)
+, faceData(_faceData), backgroundTexture(0), bgImageScale(1.0f), backgroundMesh(0), ownsBackgroundMesh(false)
 {
 	valid(0);
 }
@@ -42,6 +43,32 @@ void CDFaceWindow::setBackgroundImage( const string& path )
 	backgroundTexturePath = path;
 	redraw();
 }
+
+void CDFaceWindow::loadBackground3DModel(const std::string &modelFilename)
+{
+	CDAssimpLoader loader;
+	bool success = loader.loadModel(modelFilename);
+	if ( !success ) {
+		CDLog << "couldn't load 3d model from " << modelFilename;
+	} else {
+		backgroundMesh = new CDMesh();
+		*backgroundMesh = loader.getLoadedMesh();
+		ownsBackgroundMesh = true;
+	}
+}
+
+void CDFaceWindow::setBackground3DModel( CDMesh* model )
+{
+	if ( backgroundMesh ) {
+		if ( ownsBackgroundMesh ) {
+			delete backgroundMesh;
+			backgroundMesh = NULL;
+		}
+	}
+	backgroundMesh = model;
+	ownsBackgroundMesh = false;
+}
+
 
 void CDFaceWindow::draw()
 {

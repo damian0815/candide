@@ -222,7 +222,7 @@ void CDFaceData::calculateCompensatoryTranslateScale( const vec3& center, const 
 
 void CDFaceData::draw()
 {
-	getDistortedMesh().draw();
+	getDistortedMesh().draw( true );
 }
 
 vector<string> CDFaceData::getAnimationUnitNames()
