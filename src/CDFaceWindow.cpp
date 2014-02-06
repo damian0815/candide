@@ -10,6 +10,8 @@
 #include <Fl/math.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
+#include <sigc++/sigc++.h>
 
 #include "CDUtilities.h"
 #include "CDImageLoader.h"
@@ -19,9 +21,12 @@ using namespace glm;
 using namespace std;
 using namespace picojson;
 
+using namespace sigc;
+
+
 CDFaceWindow::CDFaceWindow(int x, int y, int w, int h, CDFaceData* _faceData )
 : Fl_Gl_Window(x, y, w, h, "FaceGL")
-, faceData(_faceData), backgroundTexture(0), bgImageScale(1.0f), backgroundMesh(0), ownsBackgroundMesh(false)
+, faceData(_faceData), backgroundTexture(0), bgImageScale(1.0f)
 {
 	valid(0);
 }
@@ -41,33 +46,49 @@ void CDFaceWindow::setBackgroundImage( const string& path )
 		backgroundTexture = 0;
 	}
 	backgroundTexturePath = path;
+	if ( path.size() ) {
+		setBackground3DModel("");
+	}
 	redraw();
 }
 
-void CDFaceWindow::loadBackground3DModel(const std::string &modelFilename)
+void CDFaceWindow::setBackground3DModel(const std::string &modelFilename)
 {
+	backgroundMesh.clear();
+	if ( modelFilename.size()==0 ) {
+		return;
+	}
+	
 	CDAssimpLoader loader;
 	bool success = loader.loadModel(modelFilename);
 	if ( !success ) {
 		CDLog << "couldn't load 3d model from " << modelFilename;
 	} else {
-		backgroundMesh = new CDMesh();
-		*backgroundMesh = loader.getLoadedMesh();
-		ownsBackgroundMesh = true;
+		setBackgroundImage("");
+		
+		backgroundMesh = loader.getLoadedMesh();
+		
+		// build a default background mesh transform matrix
+		mat4 bgMeshTransformDefault;
+		
+		// scale to fit in screen bounds
+		vec3 meshBBSize = backgroundMesh.getBoundingBoxSize();
+		float screenAspectRatio = (float)w()/(float)h();
+		float scaleX = (2.0f*screenAspectRatio)/meshBBSize.x;
+		float scaleY = 2.0f/meshBBSize.y;
+		float scale = std::min(scaleX,scaleY);
+		bgMeshTransformDefault = glm::scale(bgMeshTransformDefault, vec3(scale,scale,scale));
+
+		// offset so that center=0,0,0
+		vec3 meshBBCenter = backgroundMesh.getBoundingBoxCenter();
+		bgMeshTransformDefault = glm::translate(bgMeshTransformDefault, -meshBBCenter);
+		
+		backgroundMeshTransform = bgMeshTransformDefault;
+		
 	}
+	redraw();
 }
 
-void CDFaceWindow::setBackground3DModel( CDMesh* model )
-{
-	if ( backgroundMesh ) {
-		if ( ownsBackgroundMesh ) {
-			delete backgroundMesh;
-			backgroundMesh = NULL;
-		}
-	}
-	backgroundMesh = model;
-	ownsBackgroundMesh = false;
-}
 
 
 void CDFaceWindow::draw()
@@ -144,9 +165,19 @@ void CDFaceWindow::draw()
 	}
 		
 	// apply compensatory translate and scale
-
 	glMultMatrixf(&transform[0][0]);
 	
+	
+	if ( backgroundMesh.getNumVertices() ) {
+		glPushMatrix();
+		
+		glMultMatrixf(&backgroundMeshTransform[0][0]);
+		backgroundMesh.draw(true);
+		// also draw bounding box
+		
+		glPopMatrix();
+	}
+
 	// draw the actual facedata
 	faceData->draw();
 	
@@ -157,6 +188,7 @@ int CDFaceWindow::handle(int code)
 	if ( code == FL_PUSH ) {
 		// store drag start
 		dragPrev = vec2(Fl::event_x(), Fl::event_y());
+		backgroundMeshTransformAtDragStart = backgroundMeshTransform;
 		return 1;
 	}
 	
@@ -180,15 +212,35 @@ int CDFaceWindow::handle(int code)
 				float scale = currentScreenCenterDistance/prevScreenCenterDistance;
 				bgImageScale *= scale;
 			}
+			dragPrev = dragCurr;
+			
+		} else if ( Fl::event_command() ) {
+			
+			vec2 dragDelta = dragCurr-dragPrev;
+			float angleX=0, angleY=0, angleZ=0;
+			float angleScaleFactor = 3.0f; // 1 pixel = 3 degrees
+			angleY = dragDelta.x*angleScaleFactor;
+			angleX = dragDelta.y*angleScaleFactor;
+			
+			mat4 rotation = rotate(angleZ,vec3(0,0,1))*rotate(angleY,vec3(0,1,0))*rotate(angleX,vec3(1,0,0));
+			backgroundMeshTransform = rotation*backgroundMeshTransformAtDragStart;
+			
+			// signal to listeners
+			CDLog << this << " sent transform " << backgroundMeshTransform[0][0];
+			backgroundMeshTransformUpdatedSignal.emit( backgroundMeshTransform );
+			
+			
+			
 		} else {
+			
 			vec2 dragDelta = dragCurr-dragPrev;
 			// glOrtho(-aspectRatio, aspectRatio, -1, 1, -100, 100);
 			// therefore
 			dragDelta *= screenUnitScale;
 			bgImageTranslate += vec3(dragDelta.x,-dragDelta.y,0);
+			dragPrev = dragCurr;
 		}
 			
-		dragPrev = dragCurr;
 		redraw();
 
 		return 1;
@@ -198,6 +250,19 @@ int CDFaceWindow::handle(int code)
 	return Fl_Gl_Window::handle(code);
 		
 		
+}
+
+void CDFaceWindow::connectToBackgroundMeshTransformUpdatedSignal( CDFaceWindow* otherWindow )
+{
+	backgroundMeshTransformUpdatedSignal.connect( sigc::mem_fun(otherWindow, &CDFaceWindow::backgroundMeshTransformUpdatedInOtherWindow) );
+}
+
+void CDFaceWindow::backgroundMeshTransformUpdatedInOtherWindow(glm::mat4 transform)
+{
+	CDLog << this << " got transform " << transform[0][0];
+	backgroundMeshTransform = transform;
+	//CDLog << "Got";
+	redraw();
 }
 
 #pragma mark - Serialization/deserialization

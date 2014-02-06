@@ -16,6 +16,8 @@
 #include <FL/Fl_Gl_Window.h>
 
 #include <glm/glm.hpp>
+#include <sigc++/sigc++.h>
+
 #include "picojson.h"
 
 #include "CDFaceData.h"
@@ -32,13 +34,7 @@ public:
 	picojson::value serialize();
 	
 	void setBackgroundImage( const std::string& pngFilename );
-	
-	/*! @abstract Use model as background 3D model. Does not take ownership. */
-	void setBackground3DModel( CDMesh* model );
-	/*! @abstract Load model and take ownership. */
-	void loadBackground3DModel( const std::string& modelFilename );
-	/*! @abstract Return background model without changing ownership. */
-	CDMesh* getBackground3DModel() { return backgroundMesh; }
+	void setBackground3DModel( const std::string& modelFilename );
 	
 	void setModelTransform( glm::mat4 _transform ) { transform = _transform; }
 	void draw();
@@ -46,13 +42,20 @@ public:
 	/*! @abstract Handle mouse clicks (from Fl_Gl_Window) */
 	int handle(int code);
 	
+	void connectToBackgroundMeshTransformUpdatedSignal( CDFaceWindow* otherWindow );
 protected:
 	
 private:
+	
+	sigc::signal<void, glm::mat4> backgroundMeshTransformUpdatedSignal;
+	void backgroundMeshTransformUpdatedInOtherWindow( glm::mat4 transform );
+	
 	CDFaceData* faceData;
 	
-	CDMesh* backgroundMesh;
-	bool ownsBackgroundMesh;
+	CDMesh backgroundMesh;
+	glm::mat4 backgroundMeshTransform;
+	glm::mat4 backgroundMeshTransformAtDragStart;
+	
 	
 	std::string backgroundTexturePath;
 	GLuint backgroundTexture;
@@ -64,6 +67,7 @@ private:
 	float bgImageScale;
 	
 	glm::vec2 dragPrev;
+	
 };
 
 #endif /* defined(__candide__FaceWindow__) */

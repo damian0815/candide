@@ -268,6 +268,7 @@
 					"-lfltk_gl",
 					"-lfltk_images",
 					"-lpng",
+					"-lsigc-2.0",
 					"-lassimp",
 				);
 				SDKROOT = macosx;
@@ -307,6 +308,7 @@
 					"-lfltk_gl",
 					"-lfltk_images",
 					"-lpng",
+					"-lsigc-2.0",
 					"-lassimp",
 				);
 				SDKROOT = macosx;
@@ -320,6 +322,8 @@
 					"$(inherited)",
 					/Applications/Xcode5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					/usr/local/include,
+					"/usr/local/include/sigc++-2.0",
+					"/usr/local/lib/sigc++-2.0/include",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -332,6 +336,8 @@
 					"$(inherited)",
 					/Applications/Xcode5.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					/usr/local/include,
+					"/usr/local/include/sigc++-2.0",
+					"/usr/local/lib/sigc++-2.0/include",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

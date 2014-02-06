@@ -71,6 +71,9 @@ CDWindow::CDWindow(int w, int h, const char* label, CDFaceData* faceData )
 	// make a 90 degree rotation about the y axis
 	mat4 sideTransform = rotate(mat4(), 90.0f, vec3(0,1,0));
 	faceWindowSide->setModelTransform( sideTransform );
+	// cross-connect 3d model signals
+	faceWindowFront->connectToBackgroundMeshTransformUpdatedSignal(faceWindowSide);
+	faceWindowSide->connectToBackgroundMeshTransformUpdatedSignal(faceWindowFront);
 	
 	faceWindows->end();
 	
@@ -227,8 +230,8 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 		string selectedFile = showFileChooser( "Select 3d model", Fl_Native_File_Chooser::BROWSE_FILE, "3D Models\t*.{3ds,obj,dae,blend,ase,ifc,xgl,zgl,ply,dxf,lwo,lws,lxo,stl,x,ac,ms3d,cob,scn");
 		
 		if ( selectedFile.size() ) {
-			faceWindowFront->loadBackground3DModel(selectedFile);
-			faceWindowSide->setBackground3DModel(faceWindowFront->getBackground3DModel());
+			faceWindowFront->setBackground3DModel(selectedFile);
+			faceWindowSide->setBackground3DModel(selectedFile);
 		}
 		
 	}
