@@ -287,6 +287,12 @@ void CDFaceData::setAnimationUnitValue( const std::string &auName, float value)
 	animationUnitSettings[idx] = value;
 }
 
+void CDFaceData::clearUnitValues()
+{
+	animationUnitSettings.clear();
+	shapeUnitSettings.clear();
+}
+
 
 CDMesh CDFaceData::getDistortedMesh()
 {

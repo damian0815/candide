@@ -18,6 +18,7 @@
 class Fl_Value_Slider;
 class Fl_Menu_Bar;
 class Fl_Menu_Item;
+class Fl_Choice;
 
 #include "CDFaceWindow.h"
 
@@ -28,6 +29,8 @@ public:
 	~CDWindow();
 	
 	void resize( int x, int y, int w, int h);
+	
+	void clear();
 	
 	picojson::value serialize();
 	void deserialize( const picojson::value& source );
@@ -45,8 +48,10 @@ private:
 	std::string selectedAnimationUnitName, selectedShapeUnitName;
 	
 	Fl_Value_Slider *animationUnitSlider, *shapeUnitSlider;
+	Fl_Choice* animationUnitDropdown, *shapeUnitDropdown;
 	
 	CDFaceWindow *faceWindowFront, *faceWindowSide;
+	void faceWindow3DModelTransformUpdated( CDFaceWindow* sourceWindow, glm::mat4 transform );
 	
 };
 

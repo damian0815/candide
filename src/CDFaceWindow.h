@@ -36,23 +36,29 @@ public:
 	void setBackgroundImage( const std::string& pngFilename );
 	void setBackground3DModel( const std::string& modelFilename );
 	
+	void setBackground3dModelTransform( const glm::mat4& transform );
+	
 	void setModelTransform( glm::mat4 _transform ) { transform = _transform; }
+	
+	void clear();
+	
 	void draw();
 	
 	/*! @abstract Handle mouse clicks (from Fl_Gl_Window) */
 	int handle(int code);
 	
-	void connectToBackgroundMeshTransformUpdatedSignal( CDFaceWindow* otherWindow );
+	sigc::signal<void, CDFaceWindow*, glm::mat4> backgroundMeshTransformUpdatedSignal;
 protected:
 	
 private:
 	
-	sigc::signal<void, glm::mat4> backgroundMeshTransformUpdatedSignal;
-	void backgroundMeshTransformUpdatedInOtherWindow( glm::mat4 transform );
+	static void _updateCallback( void* windowPtr ) { ((CDFaceWindow*)windowPtr)->update(); Fl::repeat_timeout(1.0f/60.0f, &CDFaceWindow::_updateCallback, windowPtr); }
+	void update();
 	
 	CDFaceData* faceData;
 	
 	CDMesh backgroundMesh;
+	std::string backgroundMeshPath;
 	glm::mat4 backgroundMeshTransform;
 	glm::mat4 backgroundMeshTransformAtDragStart;
 	
@@ -65,6 +71,8 @@ private:
 	
 	glm::vec3 bgImageTranslate;
 	float bgImageScale;
+	
+	float lightX;
 	
 	glm::vec2 dragPrev;
 	

@@ -40,5 +40,7 @@ picojson::value picojson_encodeVector3( const glm::vec3& vec );
 glm::vec3 picojson_decodeVector3( const picojson::value& source );
 
 
+glm::mat4 picojson_decodeMat4( const picojson::value& source );
+picojson::value picojson_encodeMat4( const glm::mat4& mat );
 
 #endif /* defined(__candide__CDUtilities__) */

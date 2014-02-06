@@ -26,9 +26,12 @@ using namespace sigc;
 
 CDFaceWindow::CDFaceWindow(int x, int y, int w, int h, CDFaceData* _faceData )
 : Fl_Gl_Window(x, y, w, h, "FaceGL")
-, faceData(_faceData), backgroundTexture(0), bgImageScale(1.0f)
+, faceData(_faceData), backgroundTexture(0), bgImageScale(1.0f), lightX(0)
 {
 	valid(0);
+
+	Fl::add_timeout(1.0f/60.0f, &CDFaceWindow::_updateCallback, this );
+	
 }
 
 CDFaceWindow::~CDFaceWindow()
@@ -37,6 +40,15 @@ CDFaceWindow::~CDFaceWindow()
 		glDeleteTextures(1, &backgroundTexture);
 		backgroundTexture = 0;
 	}
+}
+
+void CDFaceWindow::clear()
+{
+	setBackgroundImage("");
+	setBackground3DModel("");
+	backgroundMeshTransform = mat4();
+	bgImageScale = 1.0f;
+	bgImageTranslate = vec3();
 }
 
 void CDFaceWindow::setBackgroundImage( const string& path )
@@ -55,6 +67,7 @@ void CDFaceWindow::setBackgroundImage( const string& path )
 void CDFaceWindow::setBackground3DModel(const std::string &modelFilename)
 {
 	backgroundMesh.clear();
+	backgroundMeshPath = modelFilename;
 	if ( modelFilename.size()==0 ) {
 		return;
 	}
@@ -116,7 +129,7 @@ void CDFaceWindow::draw()
 	}
 	
 	glClearColor(0,0,0,0 );
-	glClear( GL_COLOR_BUFFER_BIT );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -171,17 +184,68 @@ void CDFaceWindow::draw()
 	if ( backgroundMesh.getNumVertices() ) {
 		glPushMatrix();
 		
+		glEnable(GL_DEPTH_TEST);
+		
+		glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 0);
+		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+		glShadeModel(GL_SMOOTH);
+		glEnable(GL_LIGHT0);
+		GLfloat lightPos[4] = { -5, 2, 8, 1 };
+		GLfloat lightAmbient[4] = { 0.2, 0.2, 0.2, 1 };
+		GLfloat lightSpecular[4] = { 1, 0.8, 0.9, 1 };
+		GLfloat lightDiffuse[4] = { 0.8, 0.6, 0.6, 1 };
+		
+		
+		glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
+		glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
+		glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpecular);
+		
+		glEnable(GL_LIGHT1);
+		lightPos[0] = -5;
+		lightPos[1] = 15;
+		lightPos[2] = 0;
+		lightDiffuse[0] = 0.7;
+		lightDiffuse[1] = 0.8;
+		lightDiffuse[2] = 0.5;
+		lightSpecular[0] = 0.9;
+		lightSpecular[1] = 1.0;
+		lightSpecular[2] = 0.8;
+		glLightfv(GL_LIGHT1, GL_POSITION, lightPos);
+		glLightfv(GL_LIGHT1, GL_AMBIENT, lightAmbient);
+		glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDiffuse);
+		glLightfv(GL_LIGHT1, GL_SPECULAR, lightSpecular);
+		
+		//glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.5);
+		//glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, -1.0);
+		
+		glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 64 );
+		
 		glMultMatrixf(&backgroundMeshTransform[0][0]);
-		backgroundMesh.draw(true);
+		backgroundMesh.draw(false);
+		backgroundMesh.drawBoundingBox();
 		// also draw bounding box
+		
+		glDisable(GL_DEPTH_TEST);
 		
 		glPopMatrix();
 	}
+	
 
 	// draw the actual facedata
 	faceData->draw();
 	
 }
+
+void CDFaceWindow::update()
+{
+	if ( backgroundMesh.getNumVertices() ) {
+		lightX += 0.01f;
+	}
+	redraw();
+}
+
+
 
 int CDFaceWindow::handle(int code)
 {
@@ -202,32 +266,47 @@ int CDFaceWindow::handle(int code)
 		// alt down means do a zoom
 		if ( Fl::event_alt() ) {
 			
-			// calculate rest distance to centre of view
-			vec2 screenCenter = vec2(bgImageTranslate.x/screenUnitScale + w()/2,
-									 -bgImageTranslate.y/screenUnitScale + h()/2);
-			
-			float prevScreenCenterDistance = glm::length(dragPrev-screenCenter);
-			float currentScreenCenterDistance = glm::length(dragCurr-screenCenter);
-			if ( currentScreenCenterDistance>0 && currentScreenCenterDistance>0 ) {
-				float scale = currentScreenCenterDistance/prevScreenCenterDistance;
-				bgImageScale *= scale;
+			if ( backgroundTexture ) {
+				// calculate distance to centre of image
+				vec2 screenCenter = vec2(bgImageTranslate.x/screenUnitScale + w()/2,
+										 -bgImageTranslate.y/screenUnitScale + h()/2);
+				
+				float prevScreenCenterDistance = glm::length(dragPrev-screenCenter);
+				float currentScreenCenterDistance = glm::length(dragCurr-screenCenter);
+				if ( currentScreenCenterDistance>0 && currentScreenCenterDistance>0 ) {
+					float scale = currentScreenCenterDistance/prevScreenCenterDistance;
+					bgImageScale *= scale;
+				}
+				dragPrev = dragCurr;
+			} else {
+				// calculate distance to centre of view
+				vec2 screenCenter = vec2(w()/2,h()/2);
+				
+				float prevScreenCenterDistance = glm::length(dragPrev-screenCenter);
+				float currentScreenCenterDistance = glm::length(dragCurr-screenCenter);
+				if ( currentScreenCenterDistance>0 && currentScreenCenterDistance>0 ) {
+					float scale = currentScreenCenterDistance/prevScreenCenterDistance;
+					mat4 scaleMat = glm::scale(scale,scale,scale);
+					backgroundMeshTransform = scaleMat*backgroundMeshTransform;
+					backgroundMeshTransformUpdatedSignal.emit( this, backgroundMeshTransform );
+				}
+				dragPrev = dragCurr;
 			}
-			dragPrev = dragCurr;
 			
 		} else if ( Fl::event_command() ) {
 			
 			vec2 dragDelta = dragCurr-dragPrev;
 			float angleX=0, angleY=0, angleZ=0;
-			float angleScaleFactor = 3.0f; // 1 pixel = 3 degrees
-			angleY = dragDelta.x*angleScaleFactor;
-			angleX = dragDelta.y*angleScaleFactor;
+			float angleScaleFactor = 2.0f; // 2 pixel = 2 degrees
+			// round to nearest whole number of pixels
+			angleY = roundf(dragDelta.x/2.0f)*2.0f*angleScaleFactor;
+			angleX = roundf(dragDelta.y/2.0f)*2.0f*angleScaleFactor;
 			
 			mat4 rotation = rotate(angleZ,vec3(0,0,1))*rotate(angleY,vec3(0,1,0))*rotate(angleX,vec3(1,0,0));
 			backgroundMeshTransform = rotation*backgroundMeshTransformAtDragStart;
 			
 			// signal to listeners
-			CDLog << this << " sent transform " << backgroundMeshTransform[0][0];
-			backgroundMeshTransformUpdatedSignal.emit( backgroundMeshTransform );
+			backgroundMeshTransformUpdatedSignal.emit( this, backgroundMeshTransform );
 			
 			
 			
@@ -237,7 +316,16 @@ int CDFaceWindow::handle(int code)
 			// glOrtho(-aspectRatio, aspectRatio, -1, 1, -100, 100);
 			// therefore
 			dragDelta *= screenUnitScale;
-			bgImageTranslate += vec3(dragDelta.x,-dragDelta.y,0);
+			
+			vec3 translationToAdd( dragDelta.x, -dragDelta.y, 0 );
+			bgImageTranslate += translationToAdd;
+			
+			// for the background mesh, we need to transform the translation by this window's transform
+			vec4 transformedTranslation = vec4(translationToAdd.x,translationToAdd.y,translationToAdd.z,1.0)*transform;
+			mat4 translate = glm::translate( vec3(transformedTranslation.x,transformedTranslation.y,transformedTranslation.z) );
+			backgroundMeshTransform = translate*backgroundMeshTransform;
+			backgroundMeshTransformUpdatedSignal.emit( this, backgroundMeshTransform );
+			
 			dragPrev = dragCurr;
 		}
 			
@@ -252,14 +340,8 @@ int CDFaceWindow::handle(int code)
 		
 }
 
-void CDFaceWindow::connectToBackgroundMeshTransformUpdatedSignal( CDFaceWindow* otherWindow )
+void CDFaceWindow::setBackground3dModelTransform(const glm::mat4 &transform)
 {
-	backgroundMeshTransformUpdatedSignal.connect( sigc::mem_fun(otherWindow, &CDFaceWindow::backgroundMeshTransformUpdatedInOtherWindow) );
-}
-
-void CDFaceWindow::backgroundMeshTransformUpdatedInOtherWindow(glm::mat4 transform)
-{
-	CDLog << this << " got transform " << transform[0][0];
 	backgroundMeshTransform = transform;
 	//CDLog << "Got";
 	redraw();
@@ -279,21 +361,39 @@ value CDFaceWindow::serialize()
 	
 	root["bgImage"] = value(bgImage);
 	
+	object bgMesh;
+	bgMesh["path"] = value(backgroundMeshPath);
+	bgMesh["transform"] = picojson_encodeMat4( backgroundMeshTransform );
+	
+	root["bgMesh"] = value(bgMesh);
+	
+	
 	return value(root);
 }
 
 void CDFaceWindow::deserialize(const picojson::value &source)
 {
+	clear();
 	object root = source.get<object>();
 	
+	// load bg image
 	object bgImage = root["bgImage"].get<object>();
-	
 	backgroundTexturePath = bgImage["path"].get<string>();
 	bgImageScale = bgImage["scale"].get<double>();
 	bgImageTranslate = picojson_decodeVector3(bgImage["translate"]);
 	
+	// also load bgmesh, if any
+	if ( root.count("bgMesh") ) {
+		object bgMesh = root["bgMesh"].get<object>();
+		
+		string path = bgMesh["path"].get<string>();
+		setBackground3DModel(path);
+		backgroundMeshTransform = picojson_decodeMat4(bgMesh["transform"]);
+	}
+	
 	redraw();
 }
+
 
 
 

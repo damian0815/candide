@@ -58,6 +58,8 @@ public:
 	float getShapeUnitValue( const std::string& suName );
 	void setShapeUnitValue( const std::string &suName, float value );
 	
+	void clearUnitValues();
+	
 	void deserialize( const picojson::value& source );
 	picojson::value serialize();
 	

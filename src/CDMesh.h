@@ -30,6 +30,7 @@ public:
 	void addFace( int v0, int v1, int v2 );
 	
 	void draw( bool wireframe );
+	void drawBoundingBox();
 	
 	struct Triangle {
 		GLushort v[3];
@@ -44,6 +45,8 @@ public:
 	void getBoundingBox( glm::vec3& minCornerOut, glm::vec3& maxCornerOut );
 
 private:
+	
+	void updateNormals();
 	
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> vertexNormals;

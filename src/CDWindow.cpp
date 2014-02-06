@@ -50,7 +50,8 @@ CDWindow::CDWindow(int w, int h, const char* label, CDFaceData* faceData )
 	
 	Fl_Menu_Bar* menu = new Fl_Menu_Bar(0,0,w,menuHeight);
 	menu->callback(&CDWindow::_menuChanged, this);
-	menu->add("File/Open");
+	menu->add("File/New");
+	menu->add("File/Open...");
 	menu->add("File/Save as...");
 	menu->add("File/");
 	menu->add("File/Quit");
@@ -71,9 +72,19 @@ CDWindow::CDWindow(int w, int h, const char* label, CDFaceData* faceData )
 	// make a 90 degree rotation about the y axis
 	mat4 sideTransform = rotate(mat4(), 90.0f, vec3(0,1,0));
 	faceWindowSide->setModelTransform( sideTransform );
+
 	// cross-connect 3d model signals
-	faceWindowFront->connectToBackgroundMeshTransformUpdatedSignal(faceWindowSide);
-	faceWindowSide->connectToBackgroundMeshTransformUpdatedSignal(faceWindowFront);
+	faceWindowFront->backgroundMeshTransformUpdatedSignal.connect(sigc::mem_fun(this,&CDWindow::faceWindow3DModelTransformUpdated));
+	faceWindowSide->backgroundMeshTransformUpdatedSignal.connect(sigc::mem_fun(this,&CDWindow::faceWindow3DModelTransformUpdated));
+	/*
+	for ( auto it: faceWindowFront->backgroundMeshTransformUpdatedSignal.slots() )
+	{
+		CDLog << it;
+	}
+	for ( auto it: faceWindowSide->backgroundMeshTransformUpdatedSignal.slots() )
+	{
+		CDLog << it;
+	}*/
 	
 	faceWindows->end();
 	
@@ -93,6 +104,7 @@ CDWindow::CDWindow(int w, int h, const char* label, CDFaceData* faceData )
 		replace(nameEdited.begin(),nameEdited.end(),'/','|');
 		suDropdown->add( nameEdited.c_str(), 0, 0 );
 	}
+	shapeUnitDropdown = suDropdown;
 	
 	if ( suNames.size()>0 ) {
 		Fl_Value_Slider* slider = new Fl_Hor_Value_Slider( interfaceStartX, 35+menuHeight, interfaceWidth, 20, "SUSlider" );
@@ -116,6 +128,7 @@ CDWindow::CDWindow(int w, int h, const char* label, CDFaceData* faceData )
 		replace(nameEdited.begin(),nameEdited.end(),'/','\\');
 		auDropdown->add( nameEdited.c_str(), 0, 0 );
 	}
+	animationUnitDropdown = auDropdown;
 	
 	if ( auNames.size()>0 ) {
 		Fl_Value_Slider* slider = new Fl_Hor_Value_Slider( interfaceStartX, 85+menuHeight, interfaceWidth, 20, "AUSlider" );
@@ -141,6 +154,7 @@ CDWindow::CDWindow(int w, int h, const char* label, CDFaceData* faceData )
 	faceWindowSide->redraw();
 }
 
+
 CDWindow::~CDWindow()
 {
 	delete faceWindowFront;
@@ -148,6 +162,19 @@ CDWindow::~CDWindow()
 	delete animationUnitSlider;
 	delete shapeUnitSlider;
 }
+
+void CDWindow::clear()
+{
+	CDApp::getInstance()->getFaceData().clearUnitValues();
+	dropdownChanged("Shape Unit", shapeUnitDropdown->value());
+	dropdownChanged("Animation Unit", animationUnitDropdown->value());
+	
+	faceWindowFront->clear();
+	faceWindowSide->clear();
+	
+	label("Candide");
+}
+
 
 void CDWindow::resize(int x, int y, int w, int h)
 {
@@ -191,12 +218,16 @@ void CDWindow::sliderChanged( string sliderName, double newValue )
 	faceWindowSide->redraw();
 }
 
-static string showFileChooser( const string& title, enum Fl_Native_File_Chooser::Type type, const string& filter )
+static string showFileChooser( const string& title, enum Fl_Native_File_Chooser::Type type, const string& filter, const string& defaultFilename="" )
 {
 	Fl_Native_File_Chooser fnfc;
 	fnfc.title(title.c_str());
 	fnfc.type(type);
 	fnfc.filter(filter.c_str());
+	fnfc.preset_file(defaultFilename.c_str());
+	if ( type==Fl_Native_File_Chooser::BROWSE_SAVE_FILE ) {
+		fnfc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM);
+	}
 	// show
 	string selectedFile = "";
 	switch( fnfc.show() ) {
@@ -237,7 +268,7 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 	}
 	
 	else if ( selection == "Save as..." ) {
-		string path = showFileChooser("Save as...", Fl_Native_File_Chooser::BROWSE_SAVE_FILE, "Candide files\t*.candide");
+		string path = showFileChooser("Save as...", Fl_Native_File_Chooser::BROWSE_SAVE_FILE, "Candide files\t*.candide", "Untitled.candide");
 		if ( path.size() ) {
 			
 			string forceExtension = ".candide";
@@ -257,8 +288,8 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 		
 	}
 	
-	else if ( selection == "Open" ) {
-		string path = showFileChooser("Open", Fl_Native_File_Chooser::BROWSE_FILE, "Candide files\t*.candide");
+	else if ( selection == "Open..." ) {
+		string path = showFileChooser("Open...", Fl_Native_File_Chooser::BROWSE_FILE, "Candide files\t*.candide");
 		if ( path.size() ) {
 			ifstream infile(path);
 			value root;
@@ -266,8 +297,15 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 			infile.close();
 			
 			deserialize(root);
+			
+			label((string("Candide (")+path+string(")")).c_str());
 		}
 	}
+	
+	else if ( selection == "New" ) {
+		clear();
+	}
+		
 	
 	else if ( selection == "Quit" ) {
 		exit(0);
@@ -275,6 +313,19 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 		
 }
 
+#pragma mark - Signal handling
+
+void CDWindow::faceWindow3DModelTransformUpdated( CDFaceWindow* sourceWindow, glm::mat4 transform )
+{
+	//CDLog << "got transform from " << sourceWindow << ": " << transform[0][0];
+	if ( sourceWindow == faceWindowFront ) {
+		faceWindowSide->setBackground3dModelTransform(transform);
+	} else {
+		faceWindowFront->setBackground3dModelTransform(transform);
+	}
+}
+
+#pragma mark - Serialization
 
 value CDWindow::serialize()
 {
@@ -290,6 +341,8 @@ value CDWindow::serialize()
 
 void CDWindow::deserialize( const value& source )
 {
+	clear();
+	
 	object root = source.get<object>();
 	
 	CDApp::getInstance()->getFaceData().deserialize(root["faceData"]);

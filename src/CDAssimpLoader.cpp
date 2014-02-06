@@ -23,10 +23,10 @@ bool CDAssimpLoader::loadModel( const std::string& path )
 	Assimp::Importer importer;
 	
 	// load
-	const unsigned int flags =  aiProcess_CalcTangentSpace |
+	const unsigned int flags =  /*aiProcess_CalcTangentSpace |
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |
-		aiProcess_SortByPType;
+		aiProcess_SortByPType*/0;
 	const aiScene* scene = importer.ReadFile(path.c_str(),flags);
 	
 	if ( !scene ) {
