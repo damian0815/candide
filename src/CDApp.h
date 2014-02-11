@@ -11,8 +11,10 @@
 
 #include <iostream>
 #include "CDFaceData.h"
+#include "CDScene.h"
+#include "CDWindow.h"
 
-static const std::string CANDIDE_FILE_PATH = "candide3.wfm";
+static const std::string CANDIDE_FILE_PATH = "data/candide3.wfm";
 
 class CDApp
 {
@@ -21,12 +23,18 @@ public:
 	
 	static CDApp* getInstance();
 	
+	CDScene& getScene() { return scene; }
 	CDFaceData& getFaceData() { return faceData; }
 	
 	int run();
 	
+	void serialize( const std::string& path );
+	void deserialize( const std::string& path );
+	
 private:
 	
+	Fl_Window* window;
+	CDScene scene;
 	CDFaceData faceData;
 	
 };

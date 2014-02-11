@@ -108,6 +108,7 @@ static void loadDistortionUnit( CDFaceDistortionUnit& unit, ifstream& infile )
 	}
 }
 
+/*
 static size_t countTokens( const string& source )
 {
 	istringstream sourceStream(source);
@@ -121,7 +122,7 @@ static size_t countTokens( const string& source )
 	}
 	return count;
 }
-
+*/
 void CDFaceData::load( const string& path )
 {
 	meshAtRest.clear();

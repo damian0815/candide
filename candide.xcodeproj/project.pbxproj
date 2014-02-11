@@ -17,8 +17,13 @@
 		2D2528F418267CB7004647E1 /* CDFaceData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2528F218267CB7004647E1 /* CDFaceData.cpp */; };
 		2D2528F718267E39004647E1 /* CDAppException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2528F518267E39004647E1 /* CDAppException.cpp */; };
 		2D2528FC182680AD004647E1 /* CDUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D2528FA182680AD004647E1 /* CDUtilities.cpp */; };
-		2D25290418268713004647E1 /* candide3.wfm in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D252903182686D0004647E1 /* candide3.wfm */; };
 		2D25290A18268C3A004647E1 /* CDMesh.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D25290818268C3A004647E1 /* CDMesh.cpp */; };
+		2D45A78718A94DE900164DEE /* CDMVMDTestWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D45A78518A94DE900164DEE /* CDMVMDTestWindow.cpp */; };
+		2D5E82EF18A7EF52001C88D9 /* data in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D5E82EE18A7EF35001C88D9 /* data */; };
+		2D97474E18A3F32800FD5A07 /* CDScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D97474C18A3F32800FD5A07 /* CDScene.cpp */; };
+		2DBDEFEF18A4F72000C6CF09 /* CDMeanValueMeshDeformer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DBDEFED18A4F72000C6CF09 /* CDMeanValueMeshDeformer.cpp */; };
+		2DBDEFF218A520ED00C6CF09 /* CDMeshObjWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DBDEFF018A520ED00C6CF09 /* CDMeshObjWriter.cpp */; };
+		2DBDEFF518A537D100C6CF09 /* CDStupidMeshDeformer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DBDEFF318A537D100C6CF09 /* CDStupidMeshDeformer.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,7 +33,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 16;
 			files = (
-				2D25290418268713004647E1 /* candide3.wfm in CopyFiles */,
+				2D5E82EF18A7EF52001C88D9 /* data in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,9 +62,19 @@
 		2D2528FA182680AD004647E1 /* CDUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDUtilities.cpp; path = src/CDUtilities.cpp; sourceTree = SOURCE_ROOT; };
 		2D2528FB182680AD004647E1 /* CDUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDUtilities.h; path = src/CDUtilities.h; sourceTree = SOURCE_ROOT; };
 		2D252900182686AE004647E1 /* CDCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDCommon.h; path = src/CDCommon.h; sourceTree = SOURCE_ROOT; };
-		2D252903182686D0004647E1 /* candide3.wfm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = candide3.wfm; path = data/candide3.wfm; sourceTree = "<group>"; };
 		2D25290818268C3A004647E1 /* CDMesh.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDMesh.cpp; path = src/CDMesh.cpp; sourceTree = SOURCE_ROOT; };
 		2D25290918268C3A004647E1 /* CDMesh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDMesh.h; path = src/CDMesh.h; sourceTree = SOURCE_ROOT; };
+		2D45A78518A94DE900164DEE /* CDMVMDTestWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDMVMDTestWindow.cpp; path = src/CDMVMDTestWindow.cpp; sourceTree = SOURCE_ROOT; };
+		2D45A78618A94DE900164DEE /* CDMVMDTestWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDMVMDTestWindow.h; path = src/CDMVMDTestWindow.h; sourceTree = SOURCE_ROOT; };
+		2D5E82EE18A7EF35001C88D9 /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; path = data; sourceTree = "<group>"; };
+		2D97474C18A3F32800FD5A07 /* CDScene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDScene.cpp; path = src/CDScene.cpp; sourceTree = SOURCE_ROOT; };
+		2D97474D18A3F32800FD5A07 /* CDScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDScene.h; path = src/CDScene.h; sourceTree = SOURCE_ROOT; };
+		2DBDEFED18A4F72000C6CF09 /* CDMeanValueMeshDeformer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CDMeanValueMeshDeformer.cpp; sourceTree = SOURCE_ROOT; };
+		2DBDEFEE18A4F72000C6CF09 /* CDMeanValueMeshDeformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CDMeanValueMeshDeformer.h; sourceTree = SOURCE_ROOT; };
+		2DBDEFF018A520ED00C6CF09 /* CDMeshObjWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDMeshObjWriter.cpp; path = src/CDMeshObjWriter.cpp; sourceTree = SOURCE_ROOT; };
+		2DBDEFF118A520ED00C6CF09 /* CDMeshObjWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDMeshObjWriter.h; path = src/CDMeshObjWriter.h; sourceTree = SOURCE_ROOT; };
+		2DBDEFF318A537D100C6CF09 /* CDStupidMeshDeformer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDStupidMeshDeformer.cpp; path = src/CDStupidMeshDeformer.cpp; sourceTree = SOURCE_ROOT; };
+		2DBDEFF418A537D100C6CF09 /* CDStupidMeshDeformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDStupidMeshDeformer.h; path = src/CDStupidMeshDeformer.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,8 +94,8 @@
 			children = (
 				2D189B2A182650D60085EBED /* src */,
 				2D252902182686BB004647E1 /* frameworks */,
-				2D252901182686B6004647E1 /* data */,
 				2D189B29182650D60085EBED /* Products */,
+				2D5E82EE18A7EF35001C88D9 /* data */,
 			);
 			sourceTree = "<group>";
 		};
@@ -115,6 +130,8 @@
 				2D189B39182651430085EBED /* CDWindow.h */,
 				2D064E83189BF95900503574 /* CDImageLoader.cpp */,
 				2D064E84189BF95900503574 /* CDImageLoader.h */,
+				2D45A78518A94DE900164DEE /* CDMVMDTestWindow.cpp */,
+				2D45A78618A94DE900164DEE /* CDMVMDTestWindow.h */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -142,16 +159,16 @@
 				2D25290918268C3A004647E1 /* CDMesh.h */,
 				2D15B76518A037E00069BF4A /* CDAssimpLoader.cpp */,
 				2D15B76618A037E00069BF4A /* CDAssimpLoader.h */,
+				2D97474C18A3F32800FD5A07 /* CDScene.cpp */,
+				2D97474D18A3F32800FD5A07 /* CDScene.h */,
+				2DBDEFED18A4F72000C6CF09 /* CDMeanValueMeshDeformer.cpp */,
+				2DBDEFEE18A4F72000C6CF09 /* CDMeanValueMeshDeformer.h */,
+				2DBDEFF018A520ED00C6CF09 /* CDMeshObjWriter.cpp */,
+				2DBDEFF118A520ED00C6CF09 /* CDMeshObjWriter.h */,
+				2DBDEFF318A537D100C6CF09 /* CDStupidMeshDeformer.cpp */,
+				2DBDEFF418A537D100C6CF09 /* CDStupidMeshDeformer.h */,
 			);
 			name = Model;
-			sourceTree = "<group>";
-		};
-		2D252901182686B6004647E1 /* data */ = {
-			isa = PBXGroup;
-			children = (
-				2D252903182686D0004647E1 /* candide3.wfm */,
-			);
-			name = data;
 			sourceTree = "<group>";
 		};
 		2D252902182686BB004647E1 /* frameworks */ = {
@@ -213,14 +230,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D45A78718A94DE900164DEE /* CDMVMDTestWindow.cpp in Sources */,
+				2DBDEFF218A520ED00C6CF09 /* CDMeshObjWriter.cpp in Sources */,
 				2D13188C182652B7005624D7 /* CDApp.cpp in Sources */,
 				2D2528F418267CB7004647E1 /* CDFaceData.cpp in Sources */,
 				2D064E85189BF95900503574 /* CDImageLoader.cpp in Sources */,
+				2DBDEFF518A537D100C6CF09 /* CDStupidMeshDeformer.cpp in Sources */,
 				2D189B3A182651430085EBED /* CDWindow.cpp in Sources */,
 				2D2528FC182680AD004647E1 /* CDUtilities.cpp in Sources */,
 				2D2528EE18267752004647E1 /* CDFaceWindow.cpp in Sources */,
+				2D97474E18A3F32800FD5A07 /* CDScene.cpp in Sources */,
 				2D15B76718A037E00069BF4A /* CDAssimpLoader.cpp in Sources */,
 				2D2528F718267E39004647E1 /* CDAppException.cpp in Sources */,
+				2DBDEFEF18A4F72000C6CF09 /* CDMeanValueMeshDeformer.cpp in Sources */,
 				2D189B361826510B0085EBED /* main.cpp in Sources */,
 				2D25290A18268C3A004647E1 /* CDMesh.cpp in Sources */,
 			);

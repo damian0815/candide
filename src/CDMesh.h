@@ -29,8 +29,8 @@ public:
 	void addVertexNormal( const glm::vec3 &v ) { vertexNormals.push_back(v); }
 	void addFace( int v0, int v1, int v2 );
 	
-	void draw( bool wireframe );
-	void drawBoundingBox();
+	void draw( bool wireframe ) const;
+	void drawBoundingBox() const;
 	
 	struct Triangle {
 		GLushort v[3];
@@ -38,15 +38,23 @@ public:
 		Triangle( short v0, short v1, short v2 ) { v[0] = v0; v[1] = v1; v[2] = v2; }
 	};
 	
-	size_t getNumVertices() { return vertices.size(); }
+	size_t getNumVertices() const { return vertices.size(); }
+	const glm::vec3& getVertex(size_t which) const { return vertices.at(which); }
+	void setVertex(size_t which, const glm::vec3& v) { vertices[which] = v; }
 	
-	glm::vec3 getBoundingBoxCenter();
-	glm::vec3 getBoundingBoxSize();
-	void getBoundingBox( glm::vec3& minCornerOut, glm::vec3& maxCornerOut );
+	size_t getNumTriangles() const { return triangles.size(); }
+	const Triangle& getTriangle(size_t which) const { return triangles.at(which); }
+	
+	size_t getNumNormals() const { return vertexNormals.size(); }
+	const glm::vec3& getNormal(size_t which) const { return vertexNormals.at(which); }
+	
+	glm::vec3 getBoundingBoxCenter() const;
+	glm::vec3 getBoundingBoxSize() const;
+	void getBoundingBox( glm::vec3& minCornerOut, glm::vec3& maxCornerOut ) const;
 
+	void updateNormals();
 private:
 	
-	void updateNormals();
 	
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> vertexNormals;

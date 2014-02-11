@@ -42,7 +42,7 @@ void CDWindow::_menuChanged(Fl_Widget* widget, void* userData)
 	}
 }
 
-CDWindow::CDWindow(int w, int h, const char* label, CDFaceData* faceData )
+CDWindow::CDWindow(int w, int h, const char* label/*, CDFaceData* faceData*/ )
 : Fl_Window(w, h, label)
 {
 	int interfaceWidth = 300;
@@ -59,6 +59,7 @@ CDWindow::CDWindow(int w, int h, const char* label, CDFaceData* faceData )
 	menu->add("View/Load side image...");
 	menu->add("View/Load 3d model...");
 	
+	return;
 	
 	// create the face windows
 	Fl_Group* faceWindows = new Fl_Group( 10, menuHeight+10, w-interfaceWidth-30, h-menuHeight-20 );
@@ -67,13 +68,13 @@ CDWindow::CDWindow(int w, int h, const char* label, CDFaceData* faceData )
 	
 	int faceWindowGap = 5;
 	int faceWindowWidth = (w-interfaceWidth-30-faceWindowGap)/2;
-	faceWindowFront = new CDFaceWindow(10,menuHeight+10,faceWindowWidth,h-menuHeight-20, faceData);
-	faceWindowSide = new CDFaceWindow(10+faceWindowWidth+faceWindowGap,menuHeight+10,faceWindowWidth,h-menuHeight-20, faceData);
+	faceWindowFront = new CDFaceWindow(10,menuHeight+10,faceWindowWidth,h-menuHeight-20/*, faceData*/);
+	faceWindowSide = new CDFaceWindow(10+faceWindowWidth+faceWindowGap,menuHeight+10,faceWindowWidth,h-menuHeight-20/*, faceData*/);
 	// make a 90 degree rotation about the y axis
 	mat4 sideTransform = rotate(mat4(), 90.0f, vec3(0,1,0));
 	faceWindowSide->setModelTransform( sideTransform );
 
-	// cross-connect 3d model signals
+	// catch 3d model signals
 	faceWindowFront->backgroundMeshTransformUpdatedSignal.connect(sigc::mem_fun(this,&CDWindow::faceWindow3DModelTransformUpdated));
 	faceWindowSide->backgroundMeshTransformUpdatedSignal.connect(sigc::mem_fun(this,&CDWindow::faceWindow3DModelTransformUpdated));
 	/*
@@ -94,6 +95,7 @@ CDWindow::CDWindow(int w, int h, const char* label, CDFaceData* faceData )
 	interfaceElements->resizable(0);
 	interfaceElements->clip_children(true);
 	// make a drop-down and a slider for the shape units
+	CDFaceData* faceData = &CDApp::getInstance()->getFaceData();
 	vector<string> suNames = faceData->getShapeUnitNames();
 	Fl_Choice* suDropdown = new Fl_Choice( interfaceStartX, 10+menuHeight, interfaceWidth, 20, "Shape Unit" );
 	suDropdown->labeltype(FL_NORMAL_LABEL);
@@ -255,14 +257,16 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 			} else {
 				faceWindowSide->setBackgroundImage(selectedFile);
 			}
+			CDApp::getInstance()->getScene().setBackgroundMeshPath("");
 		}
 	}
 	else if ( selection == "Load 3d model..." ) {
 		string selectedFile = showFileChooser( "Select 3d model", Fl_Native_File_Chooser::BROWSE_FILE, "3D Models\t*.{3ds,obj,dae,blend,ase,ifc,xgl,zgl,ply,dxf,lwo,lws,lxo,stl,x,ac,ms3d,cob,scn");
 		
 		if ( selectedFile.size() ) {
-			faceWindowFront->setBackground3DModel(selectedFile);
-			faceWindowSide->setBackground3DModel(selectedFile);
+			CDApp::getInstance()->getScene().setBackgroundMeshPath(selectedFile);
+			faceWindowFront->setBackgroundImage("");
+			faceWindowSide->setBackgroundImage("");
 		}
 		
 	}
@@ -315,14 +319,18 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 
 #pragma mark - Signal handling
 
-void CDWindow::faceWindow3DModelTransformUpdated( CDFaceWindow* sourceWindow, glm::mat4 transform )
+void CDWindow::faceWindow3DModelTransformUpdated( const std::string& sourceWindow, glm::mat4 transform )
 {
 	//CDLog << "got transform from " << sourceWindow << ": " << transform[0][0];
-	if ( sourceWindow == faceWindowFront ) {
+	
+	CDApp::getInstance()->getScene().setBackgroundMeshTransform( transform* CDApp::getInstance()->getScene().getBackgroundMeshTransform() );
+	faceWindowSide->redraw();
+	faceWindowFront->redraw();
+	/*if ( sourceWindow == faceWindowFront ) {
 		faceWindowSide->setBackground3dModelTransform(transform);
 	} else {
 		faceWindowFront->setBackground3dModelTransform(transform);
-	}
+	}*/
 }
 
 #pragma mark - Serialization

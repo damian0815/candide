@@ -25,7 +25,7 @@ class Fl_Choice;
 class CDWindow : public Fl_Window
 {
 public:
-	CDWindow( int w, int h, const char* label, CDFaceData* faceData );
+	CDWindow( int w, int h, const char* label/*, CDFaceData* faceData */);
 	~CDWindow();
 	
 	void resize( int x, int y, int w, int h);
@@ -51,7 +51,7 @@ private:
 	Fl_Choice* animationUnitDropdown, *shapeUnitDropdown;
 	
 	CDFaceWindow *faceWindowFront, *faceWindowSide;
-	void faceWindow3DModelTransformUpdated( CDFaceWindow* sourceWindow, glm::mat4 transform );
+	void faceWindow3DModelTransformUpdated( const std::string& source, glm::mat4 transform );
 	
 };
 

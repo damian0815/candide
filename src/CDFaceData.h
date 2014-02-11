@@ -63,9 +63,10 @@ public:
 	void deserialize( const picojson::value& source );
 	picojson::value serialize();
 	
+	CDMesh getDistortedMesh();
+	
 private:
 	
-	CDMesh getDistortedMesh();
 	void load( const std::string& path );
 	
 	/// returns npos if not found

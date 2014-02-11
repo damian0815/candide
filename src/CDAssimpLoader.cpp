@@ -20,13 +20,17 @@ using namespace glm;
 
 bool CDAssimpLoader::loadModel( const std::string& path )
 {
+	loadedMesh.clear();
 	Assimp::Importer importer;
 	
 	// load
-	const unsigned int flags =  /*aiProcess_CalcTangentSpace |
+	const unsigned int flags =  aiProcess_CalcTangentSpace |
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |
-		aiProcess_SortByPType*/0;
+		aiProcess_SortByPType |
+		aiProcess_RemoveComponent;
+	importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_COLORS | aiComponent_NORMALS );
+	
 	const aiScene* scene = importer.ReadFile(path.c_str(),flags);
 	
 	if ( !scene ) {
@@ -40,7 +44,6 @@ bool CDAssimpLoader::loadModel( const std::string& path )
 		return false;
 	}
 	
-	loadedMesh.clear();
 	if ( scene->mNumMeshes>1 ) {
 		CDLog << ">1 meshes detected ("<<scene->mNumMeshes<<"): ";
 		for ( int i=0; i<scene->mNumMeshes; i++ ) {

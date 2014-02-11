@@ -25,7 +25,7 @@ void CDMesh::addFace( int v0, int v1, int v2 )
 	
 }
 
-void CDMesh::draw( bool wireframe )
+void CDMesh::draw( bool wireframe ) const
 {
 	
 	/*
@@ -46,7 +46,7 @@ void CDMesh::draw( bool wireframe )
 	glEnableClientState( GL_VERTEX_ARRAY );
 	glVertexPointer(3, GL_FLOAT, 0, &vertices[0][0] );
 	
-	bool doNormals = vertexNormals.size()==vertices.size();
+	bool doNormals = !wireframe && (vertexNormals.size()==vertices.size());
 	if ( doNormals ) {
 		glEnableClientState(GL_NORMAL_ARRAY);
 		glEnable(GL_NORMALIZE);
@@ -78,7 +78,7 @@ void CDMesh::draw( bool wireframe )
 	}
 }
 
-void CDMesh::drawBoundingBox()
+void CDMesh::drawBoundingBox() const
 {
 	vec3 vertices[8];
 	
@@ -100,7 +100,7 @@ void CDMesh::drawBoundingBox()
 }
 
 
-void CDMesh::getBoundingBox( vec3& minCorner, vec3& maxCorner )
+void CDMesh::getBoundingBox( vec3& minCorner, vec3& maxCorner ) const
 {
 	for ( int i=0; i<vertices.size(); i++ ) {
 		const vec3& v = vertices[i];
@@ -118,14 +118,14 @@ void CDMesh::getBoundingBox( vec3& minCorner, vec3& maxCorner )
 	}
 }
 
-vec3 CDMesh::getBoundingBoxCenter()
+vec3 CDMesh::getBoundingBoxCenter() const
 {
 	vec3 minCorner, maxCorner;
 	getBoundingBox(minCorner,maxCorner);
 	return (minCorner+maxCorner)*0.5f;
 }
 
-vec3 CDMesh::getBoundingBoxSize()
+vec3 CDMesh::getBoundingBoxSize() const
 {
 	vec3 minCorner, maxCorner;
 	getBoundingBox(minCorner,maxCorner);
@@ -140,14 +140,16 @@ void CDMesh::updateNormals()
 	// accumulate vertex normals
 	for ( auto t: triangles ) {
 		vec3 p0 = vertices[t.v[0]];
-		vec3 p1 = vertices[t.v[0]];
-		vec3 p2 = vertices[t.v[0]];
+		vec3 p1 = vertices[t.v[1]];
+		vec3 p2 = vertices[t.v[2]];
 		
 		vec3 normal = normalize(cross(p1-p0, p1-p2));
-		
-		auto vn = accumulatedVertexNormals.at(t.v[0]);
-		vn.first += normal;
-		vn.second++;
+
+		for ( int i=0; i<3; i++ ) {
+			auto& vn = accumulatedVertexNormals.at(t.v[i]);
+			vn.first += normal;
+			vn.second++;
+		}
 	}
 	
 	// apply

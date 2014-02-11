@@ -11,13 +11,16 @@
 
 #include "CDApp.h"
 
-int main(int argc, const char * argv[])
+#include "CDAssimpLoader.h"
+#include "CDMeanValueMeshDeformer.h"
+#include <glm/glm.hpp>
+
+using namespace glm;
+
+
+
+int runCandideApp( int argc, const char* argv[] )
 {
-	
-	char buf[4096];
-	getcwd(buf, 4096);
-	std::cout<<"cwd: "<<buf<<std::endl;
-	
 	try {
 		
 		CDApp candideApp(argc, argv);
@@ -28,5 +31,20 @@ int main(int argc, const char * argv[])
 		
 		std::cerr << "Unhandled exception: "<< e.what() << std::endl;
 	}
+	
+	return 0;
 }
 
+
+
+
+int main(int argc, const char * argv[])
+{
+	
+	char buf[4096];
+	getcwd(buf, 4096);
+	std::cout<<"cwd: "<<buf<<std::endl;
+	
+	//runMeanValueMeshDeformerTest();
+	return runCandideApp( argc, argv );
+}

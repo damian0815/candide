@@ -20,23 +20,22 @@
 
 #include "picojson.h"
 
-#include "CDFaceData.h"
 
 
 
 class CDFaceWindow : public Fl_Gl_Window
 {
 public:
-	CDFaceWindow( int x, int y, int w, int h, CDFaceData* faceData);
+	CDFaceWindow( int x, int y, int w, int h);
 	~CDFaceWindow();
 	
 	void deserialize( const picojson::value& source );
 	picojson::value serialize();
 	
 	void setBackgroundImage( const std::string& pngFilename );
-	void setBackground3DModel( const std::string& modelFilename );
+	//void setBackground3DModel( const std::string& modelFilename );
 	
-	void setBackground3dModelTransform( const glm::mat4& transform );
+	//void setBackground3dModelTransform( const glm::mat4& transform );
 	
 	void setModelTransform( glm::mat4 _transform ) { transform = _transform; }
 	
@@ -47,20 +46,10 @@ public:
 	/*! @abstract Handle mouse clicks (from Fl_Gl_Window) */
 	int handle(int code);
 	
-	sigc::signal<void, CDFaceWindow*, glm::mat4> backgroundMeshTransformUpdatedSignal;
+	sigc::signal<void, const std::string& , glm::mat4> backgroundMeshTransformUpdatedSignal;
 protected:
 	
 private:
-	
-	static void _updateCallback( void* windowPtr ) { ((CDFaceWindow*)windowPtr)->update(); Fl::repeat_timeout(1.0f/60.0f, &CDFaceWindow::_updateCallback, windowPtr); }
-	void update();
-	
-	CDFaceData* faceData;
-	
-	CDMesh backgroundMesh;
-	std::string backgroundMeshPath;
-	glm::mat4 backgroundMeshTransform;
-	glm::mat4 backgroundMeshTransformAtDragStart;
 	
 	
 	std::string backgroundTexturePath;
@@ -73,6 +62,8 @@ private:
 	float bgImageScale;
 	
 	float lightX;
+	
+	glm::mat4 backgroundMeshTransformAtDragStart;
 	
 	glm::vec2 dragPrev;
 	
