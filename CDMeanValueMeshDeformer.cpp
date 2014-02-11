@@ -7,6 +7,7 @@
 //
 
 #include "CDMeanValueMeshDeformer.h"
+#include "CDUtilities.h"
 
 #include <glm/glm.hpp>
 
@@ -24,6 +25,8 @@ void CDMeanValueMeshDeformer::setupDeformation( const CDMesh& _originalMesh, con
 	deformedMesh = _originalMesh;
 	calculateWeights(controlMesh);
 }
+
+//static const size_t interestingVertex = 5;
 
 void CDMeanValueMeshDeformer::calculateWeights( const CDMesh& controlMesh )
 {
@@ -48,6 +51,10 @@ void CDMeanValueMeshDeformer::calculateWeights( const CDMesh& controlMesh )
 			d[j] = length(Pj-x);
 			if ( d[j]<FLT_EPSILON ) {
 				// Pj == x, so bail out
+				/*
+				if ( originalMeshVIdx==interestingVertex ) {
+					CDLog<<"Pj == x, bailing out";
+				}*/
 				xWeights[(int)j] = 1.0f;
 				done = true;
 			}
@@ -81,16 +88,20 @@ void CDMeanValueMeshDeformer::calculateWeights( const CDMesh& controlMesh )
 			h *= 0.5;
 			
 			if ( fabsf(M_PI-h) < FLT_EPSILON ) {
+				/*
+				if ( originalMeshVIdx==interestingVertex ) {
+					CDLog<<"using 2d barycentric coords";
+				}*/
 				// x lies on t, use 2D barycentric coordinates
 				for ( int k=0; k<3; k++ ) {
 					xWeights[vIdx[k]] = sin(theta[k])*d[prevVIdx]*d[nextVIdx];
-					break;
 				}
 				// done
-				break;
+				continue;
 			}
 			
 			double c[3], s[3];
+			done = false;
 			for ( int k=0; k<3; k++ ) {
 				c[k] = (2.0*sin(h)*sin(h-theta[k])) / (sin(theta[nextK])*sin(theta[prevK])) - 1.0;
 				float det = determinant(mat3(u[vIdx[0]],u[vIdx[1]],u[vIdx[2]]));
@@ -100,6 +111,10 @@ void CDMeanValueMeshDeformer::calculateWeights( const CDMesh& controlMesh )
 				
 				if ( fabsf(s[k]) <= FLT_EPSILON ) {
 					// x lies outside t on the same plane, ignore t
+					/*
+					if ( originalMeshVIdx==interestingVertex ) {
+						CDLog<<"x lies outside t on the same plane->ignoring";
+					}*/
 					done = true;
 					break;
 				}
@@ -112,6 +127,10 @@ void CDMeanValueMeshDeformer::calculateWeights( const CDMesh& controlMesh )
 				float dTerm = d[vIdx[k]]*sinf(theta[nextK])*s[prevK];
 				float wK = (theta[k]-c[nextK]*theta[prevK]-c[prevK]*theta[nextK]) / dTerm;
 				assert( !std::isnan(wK) );
+				/*
+				if ( originalMeshVIdx==interestingVertex ) {
+					CDLog<<"adding "<<wK;
+				}*/
 				xWeights[vIdx[k]] += wK;
 			}
 #undef nextK
@@ -156,5 +175,17 @@ void CDMeanValueMeshDeformer::updateDeformation(const CDMesh &newControlMesh)
 	}
 	
 	deformedMesh.updateNormals();
+}
+
+void CDMeanValueMeshDeformer::compareDeformedWithOriginal()
+{
+	for ( size_t i=0; i<originalMesh.getNumVertices(); i++ ) {
+		vec3 origPos = originalMesh.getVertex(i);
+		vec3 deformedPos = deformedMesh.getVertex(i);
+		float length = glm::length(origPos-deformedPos);
+		if ( length > 1e-5 ) {
+			CDLog<<i<<": "<<length;
+		}
+	}
 }
 

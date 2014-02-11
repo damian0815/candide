@@ -49,7 +49,7 @@ private:
 class CDMVMDTestGlWindow: public Fl_Gl_Window
 {
 public:
-	CDMVMDTestGlWindow( int x, int y, int w, int h, CDMesh& controlMesh );
+	CDMVMDTestGlWindow( int x, int y, int w, int h, CDMesh& controlMesh, CDMesh& originalMesh );
 	
 	void setDeformedMesh( const CDMesh& mesh ) { deformedMesh = mesh; }
 	void draw();
@@ -61,7 +61,9 @@ private:
 	
 	float angle;
 	CDMesh deformedMesh;
+	
 	CDMesh& controlMesh;
+	CDMesh& originalMesh;
 };
 
 

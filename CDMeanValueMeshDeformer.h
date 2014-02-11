@@ -23,6 +23,8 @@ public:
 	void updateDeformation( const CDMesh& newControlMesh );
 	const CDMesh& getDeformedMesh() { return deformedMesh; }
 	
+	void compareDeformedWithOriginal();
+	
 private:
 	
 	void calculateWeights( const CDMesh& controlMesh );

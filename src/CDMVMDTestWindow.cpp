@@ -13,13 +13,15 @@
 #include <Fl/Fl_Hor_Slider.H>
 #include <Fl/Fl_Menu_Bar.H>
 
+#include "CDMeshObjWriter.h"
+
 static const float framerate = 1.0f/60.0f;
 
 using namespace glm;
 using namespace std;
 
-CDMVMDTestGlWindow::CDMVMDTestGlWindow( int x, int y, int w, int h, CDMesh& _controlMesh )
-: Fl_Gl_Window( x, y, w, h ), angle(0), controlMesh(_controlMesh)
+CDMVMDTestGlWindow::CDMVMDTestGlWindow( int x, int y, int w, int h, CDMesh& _controlMesh, CDMesh& _originalMesh )
+: Fl_Gl_Window( x, y, w, h ), angle(0), controlMesh(_controlMesh), originalMesh(_originalMesh)
 {
 	valid(0);
 	
@@ -64,11 +66,13 @@ void CDMVMDTestGlWindow::draw()
 	
 	glDisable(GL_LIGHTING);
 	glEnable(GL_BLEND);
-	glColor4f(1,1,1,1);
-
+	
+	glColor4f(1.0,0.2,0.2,0.5);
+	originalMesh.draw(true);
+	glColor4f(0.2,1.0,1.0,0.5);
 	deformedMesh.draw(true);
 	
-	glColor4f(1,1,0.3,0.5);
+	glColor4f(1,1,1,1);
 	controlMesh.draw(true);
 	
 }
@@ -110,13 +114,15 @@ CDMVMDTestWindow::CDMVMDTestWindow( int w, int h, const char* label )
 	
 	
 	CDAssimpLoader loader;
-	bool loaded = loader.loadModel("data/tetra-small.dae");
+	bool loaded = loader.loadModel("data/male_head_3ds-st.dae");
 	assert(loaded);
 	originalMesh = loader.getLoadedMesh();
+	originalMesh.updateNormals();
 	
-	loaded = loader.loadModel("data/tetra-big.dae");
+	loaded = loader.loadModel("data/candide-closed.dae");
 	assert(loaded);
 	controlMesh = loader.getLoadedMesh();
+	controlMesh.updateNormals();
 	
 	// test deformer
 	deformer.setupDeformation(originalMesh, controlMesh);
@@ -127,7 +133,7 @@ CDMVMDTestWindow::CDMVMDTestWindow( int w, int h, const char* label )
 	
 	
 	// create opengl window
-	glWindow = new CDMVMDTestGlWindow( 10, 10, w-interfaceWidth-30, h-20, controlMesh );
+	glWindow = new CDMVMDTestGlWindow( 10, 10, w-interfaceWidth-30, h-20, controlMesh, originalMesh );
 	resizable(glWindow);
 	glWindow->end();
 
@@ -140,6 +146,10 @@ CDMVMDTestWindow::CDMVMDTestWindow( int w, int h, const char* label )
 		 
 	// call first draw
 	updateDeformation();
+	deformer.compareDeformedWithOriginal();
+	
+	//CDMeshObjWriter writer;
+	//writer.writeObj( deformer.getDeformedMesh(), "/tmp/deformed.obj");
 }
 
 void CDMVMDTestWindow::resize(int x, int y, int w, int h)
