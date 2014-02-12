@@ -193,7 +193,7 @@ void CDFaceData::load( const string& path )
 		loadDistortionUnit( shapeUnits[i], infile );
 	}
 			
-	
+	controlMeshChangedSignal.emit();
 }
 
 void CDFaceData::calculateCompensatoryTranslateScale( const vec3& center, const vec3& fitSize, vec3& translateOut, float& scaleOut )
@@ -280,18 +280,25 @@ void CDFaceData::setShapeUnitValue( const std::string& suName, float value )
 {
 	size_t idx = getIndexOfShapeUnit(suName);
 	shapeUnitSettings[idx] = value;
+	
+	controlMeshChangedSignal.emit();
+	
 }
 
 void CDFaceData::setAnimationUnitValue( const std::string &auName, float value)
 {
 	size_t idx = getIndexOfAnimationUnit(auName);
 	animationUnitSettings[idx] = value;
+	
+	controlMeshChangedSignal.emit();
 }
 
 void CDFaceData::clearUnitValues()
 {
 	animationUnitSettings.clear();
 	shapeUnitSettings.clear();
+	
+	controlMeshChangedSignal.emit();
 }
 
 

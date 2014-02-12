@@ -19,7 +19,7 @@
 #include "CDUtilities.h"
 #include "CDMVMDTestWindow.h"
 
-#define TEST_CDMEANVALUEMESHDEFORMER
+//#define TEST_CDMEANVALUEMESHDEFORMER
 
 using namespace glm;
 
@@ -45,6 +45,8 @@ CDApp::CDApp( int argc, const char* argv[] )
 : faceData( CANDIDE_FILE_PATH )
 {
 	instance = this;
+	
+	scene.connectToFaceData(faceData);
 	
 #ifdef TEST_CDMEANVALUEMESHDEFORMER
 	window = new CDMVMDTestWindow(1000,630, "test");
@@ -92,13 +94,29 @@ void runMeanValueMeshDeformerTest()
 	
 }
 
+static const float framerate = 60.0f;
+
 int CDApp::run()
 {
 	window->show(0,NULL);
 	
-	runMeanValueMeshDeformerTest();
+	//runMeanValueMeshDeformerTest();
+	
+	Fl::add_timeout(1.0f/framerate, &CDApp::_update, this );
 	
 	return Fl::run();
 }
 
+void CDApp::_update( void* data )
+{
+	CDApp* app = (CDApp*)data;
+	app->update( 1.0f/framerate );
+	Fl::repeat_timeout( 1.0f/framerate, &CDApp::_update, data );
+}
+
+void CDApp::update(float dt)
+{
+	scene.update(dt);
+	window->redraw();
+}
 

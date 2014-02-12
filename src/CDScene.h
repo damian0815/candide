@@ -12,9 +12,9 @@
 #include <iostream>
 #include "CDMesh.h"
 #include "picojson.h"
+#include "CDFaceData.h"
 
-#include "CDMeanValueMeshDeformer.h"
-#include "CDStupidMeshDeformer.h"
+#include "CDMeshDeformerFromFaceData.h"
 
 #include <glm/glm.hpp>
 
@@ -23,9 +23,11 @@ class CDScene
 public:
 	
 	CDScene();
+	void connectToFaceData( CDFaceData& faceData );
 	
 	void clear();
 	
+	void update(float dt);
 	void draw();
 	
 	void setBackgroundMeshPath( const std::string& path );
@@ -36,14 +38,22 @@ public:
 	void deserialize( const picojson::value& source );
 	picojson::value serialize();
 	
+	
+	void bakeBackgroundMesh();
+	
 private:
+	
+	void faceDataMeshChanged();
+	
+	bool backgroundMeshIsBaked;
 	
 	CDMesh backgroundMesh;
 	std::string backgroundMeshPath;
 	glm::mat4 backgroundMeshTransform;
 	
-	CDStupidMeshDeformer stupidMeshDeformer;
-	CDMeanValueMeshDeformer meshDeformer;
+	CDMeshDeformerFromFaceData deformer;
+	
+	float phi;
 	
 };
 

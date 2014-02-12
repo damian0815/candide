@@ -15,8 +15,10 @@
 #include <map>
 #include <vector>
 #include "picojson.h"
+#include <sigc++/sigc++.h>
 
 #include "CDMesh.h"
+
 
 class CDFaceDistortionUnit
 {
@@ -64,6 +66,10 @@ public:
 	picojson::value serialize();
 	
 	CDMesh getDistortedMesh();
+	
+	const CDMesh& getOriginalMesh() { return meshAtRest; }
+	
+	sigc::signal<void> controlMeshChangedSignal;
 	
 private:
 	

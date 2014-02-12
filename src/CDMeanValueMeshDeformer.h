@@ -18,6 +18,7 @@ class CDMeanValueMeshDeformer
 public:
 	CDMeanValueMeshDeformer();
 	
+	void clear() { originalMesh.clear(); deformedMesh.clear(); weights.clear(); }
 	void setupDeformation( const CDMesh& originalMesh, const CDMesh& controlMesh );
 	
 	void updateDeformation( const CDMesh& newControlMesh );

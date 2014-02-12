@@ -168,3 +168,20 @@ void CDMesh::updateNormals()
 }
 
 
+CDMesh CDMeshOperation::transform( const CDMesh& inputMesh, const glm::mat4 transform )
+{
+	CDMesh targetMesh = inputMesh;
+	
+	// transform vertices
+	for ( size_t i=0; i<targetMesh.getNumVertices(); i++ ) {
+		vec4 v = vec4(targetMesh.getVertex(i),1.0f);
+		v = transform*v;
+		targetMesh.setVertex(i, vec3(v.x,v.y,v.z) );
+	}
+	// recalculate normals
+	if ( targetMesh.getNumNormals() ) {
+		targetMesh.updateNormals();
+	}
+	
+	return targetMesh;
+}

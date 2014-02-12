@@ -24,7 +24,8 @@ bool CDAssimpLoader::loadModel( const std::string& path )
 	Assimp::Importer importer;
 	
 	// load
-	const unsigned int flags =  aiProcess_CalcTangentSpace |
+	const unsigned int flags = 0;
+	aiProcess_CalcTangentSpace |
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |
 		aiProcess_SortByPType |

@@ -12,6 +12,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <Fl/Fl_Button.H>
 #include <Fl/Fl_Choice.H>
 #include <Fl/Fl_Menu_Bar.H>
 #include <Fl/Fl_Hor_Value_Slider.H>
@@ -52,14 +53,15 @@ CDWindow::CDWindow(int w, int h, const char* label/*, CDFaceData* faceData*/ )
 	menu->callback(&CDWindow::_menuChanged, this);
 	menu->add("File/New");
 	menu->add("File/Open...");
+	menu->add("File/Save");
 	menu->add("File/Save as...");
 	menu->add("File/");
 	menu->add("File/Quit");
+	
 	menu->add("View/Load front image...");
 	menu->add("View/Load side image...");
 	menu->add("View/Load 3d model...");
-	
-	return;
+	menu->add("View/Bake 3d model");
 	
 	// create the face windows
 	Fl_Group* faceWindows = new Fl_Group( 10, menuHeight+10, w-interfaceWidth-30, h-menuHeight-20 );
@@ -144,6 +146,9 @@ CDWindow::CDWindow(int w, int h, const char* label/*, CDFaceData* faceData*/ )
 		auDropdown->value(0);
 		dropdownChanged(auDropdown->label(), auDropdown->value());
 	}
+
+	
+	
 	
 	interfaceElements->end();
 
@@ -173,6 +178,9 @@ void CDWindow::clear()
 	
 	faceWindowFront->clear();
 	faceWindowSide->clear();
+	CDApp::getInstance()->getScene().clear();
+	
+	lastPath = "";
 	
 	label("Candide");
 }
@@ -216,8 +224,6 @@ void CDWindow::sliderChanged( string sliderName, double newValue )
 	} else if ( sliderName == "SUSlider" ) {
 		app->getFaceData().setShapeUnitValue(selectedShapeUnitName, newValue);
 	}
-	faceWindowFront->redraw();
-	faceWindowSide->redraw();
 }
 
 static string showFileChooser( const string& title, enum Fl_Native_File_Chooser::Type type, const string& filter, const string& defaultFilename="" )
@@ -248,6 +254,13 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 {
 	string selection = selectedItem->label();
 	
+	// if we have no last path, convert save to save as..
+	if ( selection == "Save" && lastPath.size()==0 )
+	{
+		selection = "Save as...";
+	}
+	
+	
 	if ( selection == "Load front image..." || selection == "Load side image..." ) {
 		string selectedFile = showFileChooser( "Select image", Fl_Native_File_Chooser::BROWSE_FILE, "Images\t*.{ping,jpg,jpeg}");
 		
@@ -267,12 +280,24 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 			CDApp::getInstance()->getScene().setBackgroundMeshPath(selectedFile);
 			faceWindowFront->setBackgroundImage("");
 			faceWindowSide->setBackgroundImage("");
+			
 		}
 		
+	} else if ( selection == "Bake 3d model" ) {
+		CDApp::getInstance()->getScene().bakeBackgroundMesh();
 	}
 	
+	else if ( selection == "Save" ) {
+		
+		if ( lastPath.size() ) {
+			serializeToFile(lastPath);
+		}
+	}
+			
+	
 	else if ( selection == "Save as..." ) {
-		string path = showFileChooser("Save as...", Fl_Native_File_Chooser::BROWSE_SAVE_FILE, "Candide files\t*.candide", "Untitled.candide");
+		string defaultPath = (lastPath.size()?lastPath:"Untitled.candide");
+		string path = showFileChooser("Save as...", Fl_Native_File_Chooser::BROWSE_SAVE_FILE, "Candide files\t*.candide", defaultPath);
 		if ( path.size() ) {
 			
 			string forceExtension = ".candide";
@@ -280,14 +305,11 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 				path += forceExtension;
 			}
 			
-			// serialize
-			value root = serialize();
+			serializeToFile(path);
+	
+			label((string("Candide (")+path+string(")")).c_str());
 			
-			ofstream outfile(path);
-			outfile << root.serialize();
-			
-			outfile.close();
-			
+			lastPath = path;
 		}
 		
 	}
@@ -303,11 +325,14 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 			deserialize(root);
 			
 			label((string("Candide (")+path+string(")")).c_str());
+			
+			lastPath = path;
 		}
 	}
 	
 	else if ( selection == "New" ) {
 		clear();
+		
 	}
 		
 	
@@ -333,13 +358,32 @@ void CDWindow::faceWindow3DModelTransformUpdated( const std::string& sourceWindo
 	}*/
 }
 
+void CDWindow::draw()
+{
+	Fl_Window::draw();
+	faceWindowFront->redraw();
+	faceWindowSide->redraw();
+}
+
 #pragma mark - Serialization
 
+void CDWindow::serializeToFile(const string& path )
+{
+	// serialize
+	value root = serialize();
+	
+	ofstream outfile(path);
+	outfile << root.serialize();
+	
+	outfile.close();
+}
+		
 value CDWindow::serialize()
 {
 	object root;
 	
 	root["faceData"] = CDApp::getInstance()->getFaceData().serialize();
+	root["scene"] = CDApp::getInstance()->getScene().serialize();
 	
 	root["frontWindow"] = faceWindowFront->serialize();
 	root["sideWindow"] = faceWindowSide->serialize();
@@ -354,6 +398,7 @@ void CDWindow::deserialize( const value& source )
 	object root = source.get<object>();
 	
 	CDApp::getInstance()->getFaceData().deserialize(root["faceData"]);
+	CDApp::getInstance()->getScene().deserialize(root["scene"]);
 	
 	faceWindowFront->deserialize(root["frontWindow"]);
 	faceWindowSide->deserialize(root["sideWindow"]);

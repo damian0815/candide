@@ -15,6 +15,14 @@
 #include <Fl/gl.h>
 
 class CDFaceDistortionUnit;
+class CDMesh;
+
+class CDMeshOperation
+{
+public:
+	/*! @abstract Transform vertices in targetMesh by transform; rebuild normals if necessary. */
+	static CDMesh transform( const CDMesh& mesh, const glm::mat4 transform );
+};
 
 class CDMesh
 {

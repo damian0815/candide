@@ -28,10 +28,14 @@ public:
 	
 	int run();
 	
+	void update( float dt );
+	
 	void serialize( const std::string& path );
 	void deserialize( const std::string& path );
 	
 private:
+	
+	static void _update( void* data );
 	
 	Fl_Window* window;
 	CDScene scene;

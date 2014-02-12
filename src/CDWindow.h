@@ -32,10 +32,15 @@ public:
 	
 	void clear();
 	
+	void draw();
+	
 	picojson::value serialize();
 	void deserialize( const picojson::value& source );
 
 private:
+	
+	void serializeToFile( const std::string& path );
+	
 	void sliderChanged( std::string sliderName, double newValue );
 	static void _sliderChanged( Fl_Widget* widget, void* param );
 	
@@ -52,6 +57,8 @@ private:
 	
 	CDFaceWindow *faceWindowFront, *faceWindowSide;
 	void faceWindow3DModelTransformUpdated( const std::string& source, glm::mat4 transform );
+	
+	std::string lastPath;
 	
 };
 

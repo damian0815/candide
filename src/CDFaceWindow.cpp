@@ -201,13 +201,13 @@ int CDFaceWindow::handle(int code)
 		} else if ( Fl::event_command() ) {
 			
 			vec2 dragDelta = dragCurr-dragPrev;
-			float angleX=0, angleY=0, angleZ=0;
 			float angleScaleFactor = 1.0f; // 2 pixel = 1 degree
 			// round to nearest whole number of pixels
-			angleY = roundf(dragDelta.x/2.0f)*2.0f*angleScaleFactor;
-			angleX = roundf(dragDelta.y/2.0f)*2.0f*angleScaleFactor;
+			float angle = roundf(dragDelta.x/2.0f)*2.0f*angleScaleFactor;
+			vec4 axis = vec4(0,0,1,0/* because we want to skip translation*/);
+			axis = axis*transform;
 			
-			mat4 rotation = rotate(angleZ,vec3(0,0,1))*rotate(angleY,vec3(0,1,0))*rotate(angleX,vec3(1,0,0));
+			mat4 rotation = rotate(angle,vec3(axis.x, axis.y, axis.z));
 			
 			//backgroundMeshTransform = rotation*backgroundMeshTransformAtDragStart;
 			//backgroundMeshTransformUpdatedSignal.emit( this, backgroundMeshTransform );

@@ -17,7 +17,13 @@ using namespace std;
 using namespace picojson;
 
 CDScene::CDScene()
+: phi(0), backgroundMeshIsBaked(false)
 {
+}
+
+void CDScene::connectToFaceData( CDFaceData& faceData )
+{
+	faceData.controlMeshChangedSignal.connect(sigc::mem_fun(this,&CDScene::faceDataMeshChanged));
 }
 
 void CDScene::clear()
@@ -25,6 +31,13 @@ void CDScene::clear()
 	backgroundMesh.clear();
 	backgroundMeshTransform = mat4();
 	backgroundMeshPath = "";
+	backgroundMeshIsBaked = false;
+	deformer.clear();
+}
+
+void CDScene::update(float dt)
+{
+	phi += dt;
 }
 
 void CDScene::draw()
@@ -34,49 +47,50 @@ void CDScene::draw()
 		
 		glEnable(GL_DEPTH_TEST);
 		
-		glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 0);
 		glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 		glShadeModel(GL_SMOOTH);
+		glEnable(GL_BLEND);
+
 		glEnable(GL_LIGHT0);
-		GLfloat lightPos[4] = { -5, 2, 8, 1 };
-		GLfloat lightAmbient[4] = { 0.2, 0.2, 0.2, 1 };
-		GLfloat lightSpecular[4] = { 1, 0.8, 0.9, 1 };
-		GLfloat lightDiffuse[4] = { 0.8, 0.6, 0.6, 1 };
-		
-		
+		// in front-on candide view
+		// x = left/right (<0 = right)
+		// y = up/down (<0 = up)
+		// z = front/back (<0 = toward camera)
+		GLfloat lightPos[4] = { 2.5, -2.0, -2.5, .1 };
+		GLfloat lightAmbient[4] = { 0.1, 0.1, 0.1, 1 };
+		GLfloat lightDiffuse[4] = { 0.8, 0.6, 0.6, 1.0 };
+		GLfloat lightSpecular[4] = { 1, 0.8, 0.9, 1.0 };
 		glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
 		glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
 		glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
 		glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpecular);
+		glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.0);
+		glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.001);
 		
 		glEnable(GL_LIGHT1);
-		lightPos[0] = -5;
-		lightPos[1] = 15;
-		lightPos[2] = 0;
-		lightDiffuse[0] = 0.7;
-		lightDiffuse[1] = 0.8;
-		lightDiffuse[2] = 0.5;
-		lightSpecular[0] = 0.9;
-		lightSpecular[1] = 1.0;
-		lightSpecular[2] = 0.8;
-		glLightfv(GL_LIGHT1, GL_POSITION, lightPos);
-		glLightfv(GL_LIGHT1, GL_AMBIENT, lightAmbient);
-		glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDiffuse);
-		glLightfv(GL_LIGHT1, GL_SPECULAR, lightSpecular);
+		GLfloat light2Pos[4] = { -.5, -.5, -1.0, .1 };
+		GLfloat light2Ambient[4] = { 0.1, 0.1, 0.1, 1 };
+		GLfloat light2Diffuse[4] = { 0.8, 0.8, 0.7, 1.0 };
+		GLfloat light2Specular[4] = { 0.95, 1.0, 0.9, 1.0 };
+		glLightfv(GL_LIGHT1, GL_POSITION, light2Pos);
+		glLightfv(GL_LIGHT1, GL_AMBIENT, light2Ambient);
+		glLightfv(GL_LIGHT1, GL_DIFFUSE, light2Diffuse);
+		glLightfv(GL_LIGHT1, GL_SPECULAR, light2Specular);
+		glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION, 1.0);
+		glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.001);
+			
+
 		
-		//glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.5);
-		//glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, -1.0);
+		glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 96 );
 		
-		glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 64 );
-		
-		glMultMatrixf(&backgroundMeshTransform[0][0]);
-		//backgroundMesh.draw(false);
-		// also draw bounding box
-		backgroundMesh.drawBoundingBox();
-		
-		// draw deformed mesh
-		stupidMeshDeformer.updateDeformation(CDApp::getInstance()->getFaceData().getDistortedMesh());
-		stupidMeshDeformer.getDeformedMesh().draw(false);
+		if ( backgroundMeshIsBaked ) {
+			deformer.getDeformedMesh().draw(false);
+		} else {
+			glMultMatrixf(&backgroundMeshTransform[0][0]);
+			backgroundMesh.draw(false);
+			// also draw bounding box
+			backgroundMesh.drawBoundingBox();
+		}
 		
 		glDisable(GL_DEPTH_TEST);
 		
@@ -102,6 +116,7 @@ void CDScene::setBackgroundMeshPath(const std::string& modelFilename)
 		CDLog << "couldn't load 3d model from " << modelFilename;
 	} else {
 		backgroundMesh = loader.getLoadedMesh();
+		backgroundMesh.updateNormals();
 		
 		// build a default background mesh transform matrix
 		mat4 bgMeshTransformDefault;
@@ -121,10 +136,9 @@ void CDScene::setBackgroundMeshPath(const std::string& modelFilename)
 		backgroundMeshTransform = bgMeshTransformDefault;
 		
 		
-		// setup the mesh deformer
-		stupidMeshDeformer.setupDeformation(backgroundMesh, CDApp::getInstance()->getFaceData().getDistortedMesh());
 		
 		/*
+		// setup the mesh deformer
 		
 		loader.loadModel("/Volumes/hdd/Users/damian/2.current/candide/data/candide-closed.dae");
 		meshDeformer.setupDeformation(backgroundMesh, loader.getLoadedMesh());
@@ -139,6 +153,33 @@ void CDScene::setBackgroundMeshTransform(glm::mat4 transform)
 {
 	backgroundMeshTransform = transform;
 }
+
+
+void CDScene::bakeBackgroundMesh()
+{
+	
+	string deformControlMeshPath = "data/candide-closed.dae";
+	CDAssimpLoader loader;
+	loader.loadModel(deformControlMeshPath);
+	
+	const CDMesh& controlMeshUndistorted = loader.getLoadedMesh();
+	const CDMesh& faceDataMesh = CDApp::getInstance()->getFaceData().getOriginalMesh();
+	const CDMesh& faceDataMeshDistorted = CDApp::getInstance()->getFaceData().getDistortedMesh();
+	
+	CDMesh backgroundMeshBaked = CDMeshOperation::transform( backgroundMesh, backgroundMeshTransform);
+	
+	deformer.setup( controlMeshUndistorted, faceDataMesh, faceDataMeshDistorted, backgroundMeshBaked );
+	
+	backgroundMeshIsBaked = true;
+}
+
+
+void CDScene::faceDataMeshChanged()
+{
+	deformer.updateDeformedMesh( CDApp::getInstance()->getFaceData().getDistortedMesh() );
+}
+
+
 
 picojson::value CDScene::serialize()
 {
