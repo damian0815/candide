@@ -14,7 +14,7 @@
 #include "picojson.h"
 #include "CDFaceData.h"
 
-#include "CDMeshDeformerFromFaceData.h"
+#include "CDMeanValueMeshDeformer.h"
 
 #include <glm/glm.hpp>
 
@@ -51,7 +51,7 @@ private:
 	std::string backgroundMeshPath;
 	glm::mat4 backgroundMeshTransform;
 	
-	CDMeshDeformerFromFaceData deformer;
+	CDMeanValueMeshDeformer deformer;
 	
 	float phi;
 	

@@ -16,6 +16,7 @@
 #include <numeric>
 
 #include <Fl/gl.h>
+#include "CDAssimpLoader.h"
 
 using namespace std;
 using namespace glm;
@@ -302,7 +303,7 @@ void CDFaceData::clearUnitValues()
 }
 
 
-CDMesh CDFaceData::getDistortedMesh()
+CDMesh CDFaceData::getDistortedMesh() const
 {
 	// apply the shape units to a copy of the undistorted mesh
 	CDMesh distorted = meshAtRest;
@@ -323,6 +324,29 @@ CDMesh CDFaceData::getDistortedMesh()
 	
 	return distorted;
 }
+
+const CDMesh& CDFaceData::getControlMeshForMeanValueDeformation()
+{
+	if ( !controlMeshMapper.isSetup() )
+	{
+		string controlMeshForMeanValueDeformationPath = "data/candide-closed.dae";
+		CDAssimpLoader loader;
+		bool loaded = loader.loadModel( controlMeshForMeanValueDeformationPath );
+		assert(loaded);
+		controlMeshForMeanValueDeformation = loader.getLoadedMesh();
+		
+		// setup the control mesh mapper
+		controlMeshMapper.setup( controlMeshForMeanValueDeformation, meshAtRest );
+	}
+	
+	// update the control mesh from the distorted mesh
+	CDMesh distortedMesh = getDistortedMesh();
+	
+	controlMeshMapper.updateSourceMeshFromTargetMesh( distortedMesh );
+
+	return controlMeshMapper.getSourceMesh();
+}
+
 
 #pragma mark - serialization
 

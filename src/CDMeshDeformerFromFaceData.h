@@ -12,6 +12,8 @@
 #include <iostream>
 #include "CDMeanValueMeshDeformer.h"
 
+#include "CDFaceData.h"
+
 class CDMeshDeformerFromFaceData
 {
 public:
@@ -19,11 +21,12 @@ public:
 	
 	void clear();
 	
-	void setup( const CDMesh& deformControlMeshRest, const CDMesh& faceDataMesh, const CDMesh& faceDataMeshDistorted, const CDMesh& meshToDeform );
+	void setup( const std::string& pathTodeformControlMeshRest, const CDFaceData& faceData, const CDMesh& meshToDeform  );
 	
 	void updateDeformedMesh( const CDMesh& faceDataMesh );
 	const CDMesh& getDeformedMesh() { return deformer.getDeformedMesh(); }
 	
+	picojson::value serialize();
 	
 private:
 
@@ -32,11 +35,11 @@ private:
 	
 	// The control mesh for deforming. Must be closed and with all normals pointing in the same direction.
 	CDMesh controlMesh;
+
 	// map from face data vertices to control mesh vertices
-	std::map<size_t,std::vector<size_t> > faceDataToControlMeshVertexMapping;
+	CDMeshMapper faceDataToControlMeshVertexMapper;
 	
 	CDMeanValueMeshDeformer deformer;
-	
 	
 };
 

@@ -24,14 +24,23 @@ void CDMeshDeformerFromFaceData::clear()
 	faceDataToControlMeshVertexMapping.clear();
 }
 
-void CDMeshDeformerFromFaceData::setup( const CDMesh& deformControlMeshRest, const CDMesh& faceDataMesh, const CDMesh& faceDataMeshDistorted, const CDMesh& meshToDeform )
+void CDMeshDeformerFromFaceData::setup( const std::string& pathToDeformControlMeshRest, const CDFaceData& faceData, const CDMesh &meshToDeform )
 {
 	clear();
 	
+	CDAssimpLoader loader;
+	bool loaded = loader.loadModel(pathToDeformControlMeshRest);
+	assert(loaded);
+	CDMesh deformControlMeshRest = loader.getLoadedMesh();
+	
 	controlMesh = deformControlMeshRest;
+	
+	meshMapper = faceData.getControlMeshMapper();
+	
 	
 	// setup vertex mapping between control mesh and face data mesh
 	//assert(faceDataMesh.getNumVertices() == controlMesh.getNumVertices());
+	const CDMesh& faceDataMesh = faceData.getOriginalMesh();
 	for ( size_t i=0; i<faceDataMesh.getNumVertices(); i++ ) {
 		vec3 target = faceDataMesh.getVertex(i);
 		// find the nearest vertex
@@ -52,11 +61,12 @@ void CDMeshDeformerFromFaceData::setup( const CDMesh& deformControlMeshRest, con
 	}
 
 	// update the controlMesh based on faceDataMeshDistorted
-	updateControlMesh( faceDataMeshDistorted );
+	updateControlMesh( faceData.getDistortedMesh() );
 	
 	// setup the deformer
 	deformer.setupDeformation( meshToDeform, controlMesh );
 }
+
 
 void CDMeshDeformerFromFaceData::updateControlMesh(const CDMesh& faceDataMesh)
 {

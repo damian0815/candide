@@ -18,6 +18,7 @@
 #include <sigc++/sigc++.h>
 
 #include "CDMesh.h"
+#include "CDMeshMapper.h"
 
 
 class CDFaceDistortionUnit
@@ -65,9 +66,9 @@ public:
 	void deserialize( const picojson::value& source );
 	picojson::value serialize();
 	
-	CDMesh getDistortedMesh();
-	
-	const CDMesh& getOriginalMesh() { return meshAtRest; }
+	CDMesh getDistortedMesh() const;
+
+	const CDMesh& getControlMeshForMeanValueDeformation();
 	
 	sigc::signal<void> controlMeshChangedSignal;
 	
@@ -87,6 +88,11 @@ private:
 	// settings for distortion
 	std::map<size_t,float> shapeUnitSettings;
 	std::map<size_t,float> animationUnitSettings;;
+	
+	CDMesh controlMeshForMeanValueDeformation;
+	CDMeshMapper controlMeshMapper;
+	
+	
 };
 
 

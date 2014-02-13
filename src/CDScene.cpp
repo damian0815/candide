@@ -157,26 +157,20 @@ void CDScene::setBackgroundMeshTransform(glm::mat4 transform)
 
 void CDScene::bakeBackgroundMesh()
 {
-	
-	string deformControlMeshPath = "data/candide-closed.dae";
-	CDAssimpLoader loader;
-	loader.loadModel(deformControlMeshPath);
-	
-	const CDMesh& controlMeshUndistorted = loader.getLoadedMesh();
-	const CDMesh& faceDataMesh = CDApp::getInstance()->getFaceData().getOriginalMesh();
-	const CDMesh& faceDataMeshDistorted = CDApp::getInstance()->getFaceData().getDistortedMesh();
-	
-	CDMesh backgroundMeshBaked = CDMeshOperation::transform( backgroundMesh, backgroundMeshTransform);
-	
-	deformer.setup( controlMeshUndistorted, faceDataMesh, faceDataMeshDistorted, backgroundMeshBaked );
-	
+	// bake the background mesh's transform
+	CDMesh backgroundMeshWithTransformBaked = CDMeshOperation::transform( backgroundMesh, backgroundMeshTransform);
+
+	// setup the deformer
+	CDFaceData& faceData = CDApp::getInstance()->getFaceData();
+	deformer.setupDeformation( backgroundMeshWithTransformBaked, faceData.getControlMeshForMeanValueDeformation() );
+		
 	backgroundMeshIsBaked = true;
 }
 
 
 void CDScene::faceDataMeshChanged()
 {
-	deformer.updateDeformedMesh( CDApp::getInstance()->getFaceData().getDistortedMesh() );
+	deformer.updateDeformation( CDApp::getInstance()->getFaceData().getControlMeshForMeanValueDeformation() );
 }
 
 

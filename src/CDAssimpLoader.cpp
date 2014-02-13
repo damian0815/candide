@@ -18,19 +18,23 @@ using namespace glm;
 #include "CDAppException.h"
 #include "CDUtilities.h"
 
-bool CDAssimpLoader::loadModel( const std::string& path )
+bool CDAssimpLoader::loadModel( const std::string& path, bool joinIdenticalVertices )
 {
 	loadedMesh.clear();
 	Assimp::Importer importer;
 	
 	// load
-	const unsigned int flags = 0;
-	aiProcess_CalcTangentSpace |
+	
+	// set flags
+	unsigned int flags = aiProcess_CalcTangentSpace |
 		aiProcess_Triangulate |
-		aiProcess_JoinIdenticalVertices |
-		aiProcess_SortByPType |
-		aiProcess_RemoveComponent;
-	importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_COLORS | aiComponent_NORMALS );
+		aiProcess_SortByPType;
+	
+	// set extra flags if we want to join identical vertices
+	if ( joinIdenticalVertices ) {
+		flags |= aiProcess_JoinIdenticalVertices | aiProcess_RemoveComponent;
+		importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, aiComponent_COLORS | aiComponent_NORMALS );
+	}
 	
 	const aiScene* scene = importer.ReadFile(path.c_str(),flags);
 	

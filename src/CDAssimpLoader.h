@@ -17,7 +17,7 @@ class CDAssimpLoader
 {
 public:
 	
-	bool loadModel( const std::string& path );
+	bool loadModel( const std::string& path, bool joinIdenticalVertices=true );
 	
 	const CDMesh& getLoadedMesh() { return loadedMesh; }
 
