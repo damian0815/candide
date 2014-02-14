@@ -61,7 +61,10 @@ CDWindow::CDWindow(int w, int h, const char* label/*, CDFaceData* faceData*/ )
 	menu->add("View/Load front image...");
 	menu->add("View/Load side image...");
 	menu->add("View/Load 3d model...");
-	menu->add("View/Bake 3d model");
+	
+	menu->add("Mesh/Bake 3d model");
+	menu->add("Mesh/Save baked 3d model as...");
+	menu->add("Mesh/Open baked 3d model...");
 	
 	// create the face windows
 	Fl_Group* faceWindows = new Fl_Group( 10, menuHeight+10, w-interfaceWidth-30, h-menuHeight-20 );
@@ -172,7 +175,7 @@ CDWindow::~CDWindow()
 
 void CDWindow::clear()
 {
-	CDApp::getInstance()->getFaceData().clearUnitValues();
+	CDApp::getInstance()->getFaceData().clear();
 	dropdownChanged("Shape Unit", shapeUnitDropdown->value());
 	dropdownChanged("Animation Unit", animationUnitDropdown->value());
 	
@@ -270,23 +273,54 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 			} else {
 				faceWindowSide->setBackgroundImage(selectedFile);
 			}
-			CDApp::getInstance()->getScene().setBackgroundMeshPath("");
+			CDApp::getInstance()->getScene().loadBackgroundMesh("");
 		}
 	}
 	else if ( selection == "Load 3d model..." ) {
 		string selectedFile = showFileChooser( "Select 3d model", Fl_Native_File_Chooser::BROWSE_FILE, "3D Models\t*.{3ds,obj,dae,blend,ase,ifc,xgl,zgl,ply,dxf,lwo,lws,lxo,stl,x,ac,ms3d,cob,scn");
 		
 		if ( selectedFile.size() ) {
-			CDApp::getInstance()->getScene().setBackgroundMeshPath(selectedFile);
+			CDApp::getInstance()->getScene().loadBackgroundMesh(selectedFile);
 			faceWindowFront->setBackgroundImage("");
 			faceWindowSide->setBackgroundImage("");
 			
 		}
 		
-	} else if ( selection == "Bake 3d model" ) {
+	}
+	
+	else if ( selection == "Bake 3d model" ) {
 		CDApp::getInstance()->getScene().bakeBackgroundMesh();
 	}
 	
+	else if ( selection == "Open baked 3d model..." ) {
+		string selectedFile = showFileChooser( "Select baked 3d model", Fl_Native_File_Chooser::BROWSE_FILE, "Candide baked 3D models\t*.candideBaked3DModel" );
+		
+		if ( selectedFile.size() ) {
+			ifstream infile(selectedFile);
+			value root;
+			infile >> root;
+			infile.close();
+			
+			CDApp::getInstance()->getScene().deserializeBakedBackgroundMesh(root);
+		}
+	}
+	
+	else if ( selection == "Save baked 3d model as..." ) {
+		
+		string defaultPath = CDApp::getInstance()->getScene().getBackgroundMeshPath() + "-baked.candideBaked3DModel";
+		string path = showFileChooser("Save as...", Fl_Native_File_Chooser::BROWSE_SAVE_FILE, "Candide baked 3D models\t*.candideBaked3DModel", defaultPath );
+		
+		if ( path.size() ) {
+			// serialize
+			value root = CDApp::getInstance()->getScene().serializeBakedBackgroundMesh();
+	
+			ofstream outfile(path);
+			outfile << root.serialize();
+			
+			outfile.close();
+		}
+	}
+			
 	else if ( selection == "Save" ) {
 		
 		if ( lastPath.size() ) {

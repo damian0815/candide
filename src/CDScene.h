@@ -30,18 +30,30 @@ public:
 	void update(float dt);
 	void draw();
 	
-	void setBackgroundMeshPath( const std::string& path );
+	const std::string& getBackgroundMeshPath() const { return backgroundMeshPath; }
+	void loadBackgroundMesh( const std::string& path );
 	
-	glm::mat4 getBackgroundMeshTransform() { return backgroundMeshTransform; }
+	glm::mat4 getBackgroundMeshTransform() const { return backgroundMeshTransform; }
 	void setBackgroundMeshTransform( glm::mat4 transform );
 	
 	void deserialize( const picojson::value& source );
-	picojson::value serialize();
+	picojson::value serialize() const;
 	
-	
+	/*! @abstract Create a baked background mesh using the current background mesh and the current FaceData settings.
+	 @discussion A 'baked' background mesh is a background mesh that will deform along with the FaceData deformation. */
 	void bakeBackgroundMesh();
+	picojson::value serializeBakedBackgroundMesh() { return serializedBakedBackgroundMesh; }
+	void deserializeBakedBackgroundMesh( const picojson::value& value );
+
+	void clearBakedBackgroundMesh();
+	
 	
 private:
+	
+	void bakeBackgroundMesh( const CDMesh& faceControlMeshForMVD );
+	void serializeBakedBackgroundMeshInternal( const CDFaceData& faceData );
+	// we cache this so that stuff
+	picojson::value serializedBakedBackgroundMesh;
 	
 	void faceDataMeshChanged();
 	

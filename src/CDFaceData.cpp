@@ -224,7 +224,7 @@ void CDFaceData::calculateCompensatoryTranslateScale( const vec3& center, const 
 
 void CDFaceData::draw()
 {
-	getDistortedMesh().draw( true );
+	getDistortedMesh().draw();
 }
 
 vector<string> CDFaceData::getAnimationUnitNames()
@@ -294,10 +294,12 @@ void CDFaceData::setAnimationUnitValue( const std::string &auName, float value)
 	controlMeshChangedSignal.emit();
 }
 
-void CDFaceData::clearUnitValues()
+void CDFaceData::clear()
 {
-	animationUnitSettings.clear();
 	shapeUnitSettings.clear();
+	animationUnitSettings.clear();
+	controlMeshForMeanValueDeformation.clear();
+	controlMeshMapper.clear();
 	
 	controlMeshChangedSignal.emit();
 }
@@ -342,9 +344,9 @@ const CDMesh& CDFaceData::getControlMeshForMeanValueDeformation()
 	// update the control mesh from the distorted mesh
 	CDMesh distortedMesh = getDistortedMesh();
 	
-	controlMeshMapper.updateSourceMeshFromTargetMesh( distortedMesh );
+	controlMeshMapper.updateTargetMeshFromSourceMesh( distortedMesh );
 
-	return controlMeshMapper.getSourceMesh();
+	return controlMeshMapper.getTargetMesh();
 }
 
 
@@ -352,11 +354,10 @@ const CDMesh& CDFaceData::getControlMeshForMeanValueDeformation()
 
 void CDFaceData::deserialize( const picojson::value& source )
 {
-	object root = source.get<object>();
+	clear();
 	
-	// clear existing
-	shapeUnitSettings.clear();
-	animationUnitSettings.clear();
+	object root = source.get<object>();
+
 	
 	// load shape units
 	object shapeUnitSettingsSer = root["shapeUnits"].get<object>();
@@ -376,7 +377,7 @@ void CDFaceData::deserialize( const picojson::value& source )
 		
 }
 
-picojson::value CDFaceData::serialize()
+picojson::value CDFaceData::serialize() const
 {
 	object root;
 	

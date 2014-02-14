@@ -37,7 +37,7 @@ public:
 	void addVertexNormal( const glm::vec3 &v ) { vertexNormals.push_back(v); }
 	void addFace( int v0, int v1, int v2 );
 	
-	void draw( bool wireframe ) const;
+	void draw() const;
 	void drawBoundingBox() const;
 	
 	struct Triangle {

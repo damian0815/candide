@@ -84,10 +84,10 @@ void CDScene::draw()
 		glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 96 );
 		
 		if ( backgroundMeshIsBaked ) {
-			deformer.getDeformedMesh().draw(false);
+			deformer.getDeformedMesh().draw();
 		} else {
 			glMultMatrixf(&backgroundMeshTransform[0][0]);
-			backgroundMesh.draw(false);
+			backgroundMesh.draw();
 			// also draw bounding box
 			backgroundMesh.drawBoundingBox();
 		}
@@ -98,11 +98,26 @@ void CDScene::draw()
 	}
 
 	// draw the actual facedata
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	// polygon mode
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	
+	// draw once with depth test disabled
+	glColor4f(1,1,1,0.1);
+	glDisable(GL_DEPTH_TEST);
 	CDApp::getInstance()->getFaceData().draw();
 	
+	// draw again with depth test enabled
+	glColor4f(1,1,1,1);
+	glEnable(GL_DEPTH_TEST);
+	CDApp::getInstance()->getFaceData().draw();
+	
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-void CDScene::setBackgroundMeshPath(const std::string& modelFilename)
+void CDScene::loadBackgroundMesh(const std::string& modelFilename)
 {
 	backgroundMesh.clear();
 	backgroundMeshPath = modelFilename;
@@ -154,28 +169,77 @@ void CDScene::setBackgroundMeshTransform(glm::mat4 transform)
 	backgroundMeshTransform = transform;
 }
 
+#pragma mark - Baking background mesh
+
+void CDScene::deserializeBakedBackgroundMesh(const picojson::value& value)
+{
+	// in order to bake the background mesh, we need the mesh itself, a transform to apply to it, and a FaceData instance with shape & anim units set to the given values
+	
+	object root = value.get<object>();
+	string meshPath = root["meshPath"].get<string>();
+	loadBackgroundMesh(meshPath);
+	mat4 meshTransform = picojson_decodeMat4(root["meshTransform"]);
+	setBackgroundMeshTransform(meshTransform);
+	
+	// construct faceData object
+	CDFaceData faceData = CDApp::getInstance()->getFaceData();
+	faceData.deserialize(root["faceData"]);
+	
+	// bake
+	bakeBackgroundMesh( faceData.getControlMeshForMeanValueDeformation() );
+	
+	serializedBakedBackgroundMesh = value;
+	faceDataMeshChanged();
+}
+
+void CDScene::serializeBakedBackgroundMeshInternal( const CDFaceData& faceData )
+{
+	object root;
+	
+	root["meshPath"] = value(backgroundMeshPath);
+	root["meshTransform"] = picojson_encodeMat4(backgroundMeshTransform);
+	root["faceData"] = faceData.serialize();
+	
+	serializedBakedBackgroundMesh = value(root);
+}
+
+void CDScene::clearBakedBackgroundMesh()
+{
+	backgroundMeshIsBaked = false;
+	deformer.clear();
+}
 
 void CDScene::bakeBackgroundMesh()
 {
+	CDFaceData& faceData = CDApp::getInstance()->getFaceData();
+	bakeBackgroundMesh( faceData.getControlMeshForMeanValueDeformation() );
+	serializeBakedBackgroundMeshInternal(faceData);
+}
+
+void CDScene::bakeBackgroundMesh( const CDMesh& faceControlMeshForMVD )
+{
+	if ( backgroundMeshIsBaked ) {
+		clearBakedBackgroundMesh();
+	}
+	
 	// bake the background mesh's transform
 	CDMesh backgroundMeshWithTransformBaked = CDMeshOperation::transform( backgroundMesh, backgroundMeshTransform);
 
 	// setup the deformer
-	CDFaceData& faceData = CDApp::getInstance()->getFaceData();
-	deformer.setupDeformation( backgroundMeshWithTransformBaked, faceData.getControlMeshForMeanValueDeformation() );
+	deformer.setupDeformation( backgroundMeshWithTransformBaked, faceControlMeshForMVD );
 		
 	backgroundMeshIsBaked = true;
+	
 }
-
 
 void CDScene::faceDataMeshChanged()
 {
 	deformer.updateDeformation( CDApp::getInstance()->getFaceData().getControlMeshForMeanValueDeformation() );
 }
 
+#pragma mark - Serialization
 
-
-picojson::value CDScene::serialize()
+picojson::value CDScene::serialize() const
 {
 	object root;
 	
@@ -195,7 +259,7 @@ void CDScene::deserialize( const picojson::value& source )
 	object bgMesh = root["bgMesh"].get<object>();
 	
 	string path = bgMesh["path"].get<string>();
-	setBackgroundMeshPath(path);
+	loadBackgroundMesh(path);
 	backgroundMeshTransform = picojson_decodeMat4(bgMesh["transform"]);
 		
 }

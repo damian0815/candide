@@ -25,28 +25,13 @@ void CDMesh::addFace( int v0, int v1, int v2 )
 	
 }
 
-void CDMesh::draw( bool wireframe ) const
+void CDMesh::draw() const
 {
-	
-	/*
-	glBegin(GL_LINES);
-	for ( int i=0; i<triangles.size(); i++ ) {
-		const Triangle& t = triangles[i];
-		for ( int j=0; j<3; j++ ) {
-			const vec3& u = vertices[t.v[j]];
-			glVertex3f( u.x, u.y, u.z );
-			const vec3& v = vertices[t.v[(j+1)%3]];
-			glVertex3f( v.x, v.y, v.z );
-		}
-	}
-	glEnd();
-	
-	return;*/
 	
 	glEnableClientState( GL_VERTEX_ARRAY );
 	glVertexPointer(3, GL_FLOAT, 0, &vertices[0][0] );
 	
-	bool doNormals = !wireframe && (vertexNormals.size()==vertices.size());
+	bool doNormals = (vertexNormals.size()==vertices.size());
 	if ( doNormals ) {
 		glEnableClientState(GL_NORMAL_ARRAY);
 		glEnable(GL_NORMALIZE);
@@ -55,21 +40,8 @@ void CDMesh::draw( bool wireframe ) const
 	} else {
 		glDisable( GL_LIGHTING );
 	}
-	
-	if ( wireframe ) {
-		short lines[triangles.size()*3*2];
-		for ( int i=0; i<triangles.size(); i++ ) {
-			lines[i*6+0] = triangles[i].v[0];
-			lines[i*6+1] = triangles[i].v[1];
-			lines[i*6+2] = triangles[i].v[1];
-			lines[i*6+3] = triangles[i].v[2];
-			lines[i*6+4] = triangles[i].v[2];
-			lines[i*6+5] = triangles[i].v[0];
-		}
-		glDrawElements( GL_LINES, (GLsizei)triangles.size()*3*2, GL_UNSIGNED_SHORT, &lines[0] );
-	} else {
-		glDrawElements( GL_TRIANGLES, (GLsizei)triangles.size()*3, GL_UNSIGNED_SHORT, &triangles[0].v[0]);
-	}
+
+	glDrawElements( GL_TRIANGLES, (GLsizei)triangles.size()*3, GL_UNSIGNED_SHORT, &triangles[0].v[0]);
 	
 	glDisableClientState( GL_VERTEX_ARRAY );
 	if ( doNormals ) {

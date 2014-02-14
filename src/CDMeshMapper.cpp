@@ -55,47 +55,47 @@ struct TriangleCompare
 };
 
 
-void CDMeshMapper::setup(const CDMesh &_sourceMesh, const CDMesh &targetMesh)
+void CDMeshMapper::setup(const CDMesh &_targetMesh, const CDMesh &sourceMesh)
 {
-	sourceMesh = _sourceMesh;
+	targetMesh = _targetMesh;
 	
-	// map vertices in sourceMesh to vertices in targetMesh
-	targetToSourceVertexMapping.clear();
-	for ( size_t i=0; i<targetMesh.getNumVertices(); i++ ) {
-		vec3 target = targetMesh.getVertex(i);
-		// find lengths to source vertices
-		targetToSourceVertexMapping[i].clear();
-		for ( size_t j=0; j<sourceMesh.getNumVertices(); j++ ) {
-			vec3 test = sourceMesh.getVertex(j);
-			float testLength = length(target-test);
+	// map vertices in targetMesh to vertices in sourceMesh
+	sourceToTargetVertexMapping.clear();
+	for ( size_t i=0; i<sourceMesh.getNumVertices(); i++ ) {
+		vec3 source = sourceMesh.getVertex(i);
+		// find lengths to target vertices
+		sourceToTargetVertexMapping[i].clear();
+		for ( size_t j=0; j<targetMesh.getNumVertices(); j++ ) {
+			vec3 test = targetMesh.getVertex(j);
+			float testLength = length(source-test);
 			// store vertices at the same pos
 			if ( testLength<1e-5 ) {
-				targetToSourceVertexMapping[i].insert(j);
+				sourceToTargetVertexMapping[i].insert(j);
 			}
 		}
-		//assert(targetToSourceVertexMapping.at(i).size()>0);
+		//assert(sourceToTargetVertexMapping.at(i).size()>0);
 	}
 	
 	
 	/*
 	
 	// now we know where to find vertices in the same place
-	map<size_t, size_t> sourceToTargetVertexMapping;
+	map<size_t, size_t> targetTosourceVertexMapping;
 	
-	for ( size_t i=0; i<targetMesh.getNumTriangles(); i++ ) {
-		const CDMesh::Triangle& t = targetMesh.getTriangle(i);
-		// find a triangle in sourceMesh that matches this
-		set<size_t> potentialTargetVerts[3];
+	for ( size_t i=0; i<sourceMesh.getNumTriangles(); i++ ) {
+		const CDMesh::Triangle& t = sourceMesh.getTriangle(i);
+		// find a triangle in targetMesh that matches this
+		set<size_t> potentialsourceVerts[3];
 		for ( int i=0; i<3; i++ ) {
-			size_t sourceVertex = t.v[i];
-			potentialSourceVerts[i] = targetToSourceVertexMapping[sourceVertex];
+			size_t targetVertex = t.v[i];
+			potentialtargetVerts[i] = sourceToTargetVertexMapping[targetVertex];
 		}
 		
 		// find triangles that match
-		for ( size_t j=0; j<sourceMesh.getNumTriangles(); j++ ) {
+		for ( size_t j=0; j<targetMesh.getNumTriangles(); j++ ) {
 			for ( int k=0; k<3; k++ ) {
 				
-			if ( triangleIsPossible( sourceMesh.getTriangle(j), potentialSourceVerts ) ) {
+			if ( triangleIsPossible( targetMesh.getTriangle(j), potentialtargetVerts ) ) {
 				
 			}
 		}
@@ -105,46 +105,46 @@ void CDMeshMapper::setup(const CDMesh &_sourceMesh, const CDMesh &targetMesh)
 		
 	
 	
-	// map triangles in sourceMesh to triangles in targetMesh
-	assert(sourceMesh.getNumTriangles()>=targetMesh.getNumTriangles());
+	// map triangles in targetMesh to triangles in sourceMesh
+	assert(targetMesh.getNumTriangles()>=sourceMesh.getNumTriangles());
 
-	set<CDMesh::Triangle,TriangleCompare> targetTriangles;
-	// first put all target triangles into targetTriangles set
-	for ( size_t i=0; i<targetMesh.getNumTriangles(); i++ ) {
-		const CDMesh::Triangle& t = targetMesh.getTriangle(i);
-		assert(!targetTriangles.count(t));
-		targetTriangles.insert(t);
-	}
-	
-	// map of vertex to target triangle membership
-	multimap<size_t, CDMesh::Triangle> sourceVertexToTargetTriangleMap;
-	
-	// for each source triangle, find its equivalent in targetMesh
+	set<CDMesh::Triangle,TriangleCompare> sourceTriangles;
+	// first put all source triangles into sourceTriangles set
 	for ( size_t i=0; i<sourceMesh.getNumTriangles(); i++ ) {
 		const CDMesh::Triangle& t = sourceMesh.getTriangle(i);
-		if ( targetTriangles.count(t) ) {
+		assert(!sourceTriangles.count(t));
+		sourceTriangles.insert(t);
+	}
+	
+	// map of vertex to source triangle membership
+	multimap<size_t, CDMesh::Triangle> targetVertexTosourceTriangleMap;
+	
+	// for each target triangle, find its equivalent in sourceMesh
+	for ( size_t i=0; i<targetMesh.getNumTriangles(); i++ ) {
+		const CDMesh::Triangle& t = targetMesh.getTriangle(i);
+		if ( sourceTriangles.count(t) ) {
 			for ( int j=0; j<3; j++ ) {
-				sourceVertexToTargetTriangleMap.insert( t.v[0],  )
+				targetVertexTosourceTriangleMap.insert( t.v[0],  )
 		}
-		assert(targetTriangles.count(t));
+		assert(sourceTriangles.count(t));
 	}
 	
 	*/
 }
 
-void CDMeshMapper::updateSourceMeshFromTargetMesh(const CDMesh &targetMesh)
+void CDMeshMapper::updateTargetMeshFromSourceMesh(const CDMesh &sourceMesh)
 {
-	assert(targetToSourceVertexMapping.size());
-	// update our source mesh
+	assert(sourceToTargetVertexMapping.size());
+	// update our target mesh
 	
-	// walk through target vertices
-	for ( size_t i=0; i<targetMesh.getNumVertices(); i++ ) {
+	// walk through source vertices
+	for ( size_t i=0; i<sourceMesh.getNumVertices(); i++ ) {
 		// get the face data vertex
-		vec3 pos = targetMesh.getVertex(i);
-		// find indices on source mesh to match
-		for ( size_t sourceMeshIdx: targetToSourceVertexMapping.at(i) ) {
+		vec3 pos = sourceMesh.getVertex(i);
+		// find indices on target mesh to match
+		for ( size_t targetMeshIdx: sourceToTargetVertexMapping.at(i) ) {
 			// apply
-			sourceMesh.setVertex(sourceMeshIdx, pos);
+			targetMesh.setVertex(targetMeshIdx, pos);
 		}
 	}
 }

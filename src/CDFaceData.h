@@ -48,6 +48,7 @@ public:
 	/// filename is in wfm format, see candide3
 	CDFaceData( const std::string &path );
 	
+	void clear();
 
 	void calculateCompensatoryTranslateScale( const glm::vec3& centerPos, const glm::vec3& fitSize, glm::vec3 &tranlateOut, float &scaleOut );
 	void draw();
@@ -61,10 +62,9 @@ public:
 	float getShapeUnitValue( const std::string& suName );
 	void setShapeUnitValue( const std::string &suName, float value );
 	
-	void clearUnitValues();
 	
 	void deserialize( const picojson::value& source );
-	picojson::value serialize();
+	picojson::value serialize() const;
 	
 	CDMesh getDistortedMesh() const;
 

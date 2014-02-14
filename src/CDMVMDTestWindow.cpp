@@ -66,14 +66,17 @@ void CDMVMDTestGlWindow::draw()
 	
 	glDisable(GL_LIGHTING);
 	glEnable(GL_BLEND);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	
 	glColor4f(1.0,0.2,0.2,0.5);
-	originalMesh.draw(true);
+	originalMesh.draw();
 	glColor4f(0.2,1.0,1.0,0.5);
-	deformedMesh.draw(true);
+	deformedMesh.draw();
 	
 	glColor4f(1,1,1,1);
-	controlMesh.draw(true);
+	controlMesh.draw();
+	
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	
 }
 
