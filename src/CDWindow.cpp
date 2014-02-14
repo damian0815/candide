@@ -59,8 +59,11 @@ CDWindow::CDWindow(int w, int h, const char* label/*, CDFaceData* faceData*/ )
 	menu->add("File/Quit");
 	
 	menu->add("View/Load front image...");
+	menu->add("View/Clear front image");
 	menu->add("View/Load side image...");
+	menu->add("View/Clear side image");
 	menu->add("View/Load 3d model...");
+	menu->add("View/Clear 3d model");
 	
 	menu->add("Mesh/Bake 3d model");
 	menu->add("Mesh/Save baked 3d model as...");
@@ -276,6 +279,13 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 			CDApp::getInstance()->getScene().loadBackgroundMesh("");
 		}
 	}
+	else if ( selection == "Clear front image" ) {
+		faceWindowFront->setBackgroundImage("");
+	}
+	else if ( selection == "Clear side image" ) {
+		faceWindowSide->setBackgroundImage("");
+	}
+
 	else if ( selection == "Load 3d model..." ) {
 		string selectedFile = showFileChooser( "Select 3d model", Fl_Native_File_Chooser::BROWSE_FILE, "3D Models\t*.{3ds,obj,dae,blend,ase,ifc,xgl,zgl,ply,dxf,lwo,lws,lxo,stl,x,ac,ms3d,cob,scn");
 		
@@ -287,9 +297,8 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 		}
 		
 	}
-	
-	else if ( selection == "Bake 3d model" ) {
-		CDApp::getInstance()->getScene().bakeBackgroundMesh();
+	else if ( selection == "Clear 3d model" ) {
+		CDApp::getInstance()->getScene().loadBackgroundMesh("");
 	}
 	
 	else if ( selection == "Open baked 3d model..." ) {
@@ -305,11 +314,19 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 		}
 	}
 	
+	else if ( selection == "Bake 3d model" ) {
+		CDApp::getInstance()->getScene().bakeBackgroundMesh();
+	}
+	
 	else if ( selection == "Save baked 3d model as..." ) {
 		
 		string defaultPath = CDApp::getInstance()->getScene().getBackgroundMeshPath() + "-baked.candideBaked3DModel";
 		string path = showFileChooser("Save as...", Fl_Native_File_Chooser::BROWSE_SAVE_FILE, "Candide baked 3D models\t*.candideBaked3DModel", defaultPath );
-		
+		string forceExtension = ".candideBaked3DModel";
+		if ( path.size()<forceExtension.size() || path.substr(path.size()-forceExtension.size())!=forceExtension ) {
+			path += forceExtension;
+		}
+				
 		if ( path.size() ) {
 			// serialize
 			value root = CDApp::getInstance()->getScene().serializeBakedBackgroundMesh();
