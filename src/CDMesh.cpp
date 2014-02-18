@@ -25,7 +25,8 @@ void CDMesh::addFace( int v0, int v1, int v2 )
 	
 }
 
-void CDMesh::draw() const
+
+void CDMesh::setupArrays() const
 {
 	
 	glEnableClientState( GL_VERTEX_ARRAY );
@@ -40,10 +41,30 @@ void CDMesh::draw() const
 	} else {
 		glDisable( GL_LIGHTING );
 	}
+	
+	if ( textureCoordinates.size() == getNumVertices() ) {
+		glEnableClientState( GL_TEXTURE_COORD_ARRAY );
+		glTexCoordPointer( 2, GL_FLOAT, 0, &textureCoordinates[0][0] );
+	}
+}
+
+
+void CDMesh::draw() const
+{
+	setupArrays();
 
 	glDrawElements( GL_TRIANGLES, (GLsizei)triangles.size()*3, GL_UNSIGNED_SHORT, &triangles[0].v[0]);
 	
+	teardownArrays();
+	
+}
+
+void CDMesh::teardownArrays() const
+{
 	glDisableClientState( GL_VERTEX_ARRAY );
+	glDisableClientState( GL_TEXTURE_COORD_ARRAY );
+	
+	bool doNormals = (vertexNormals.size()==vertices.size());
 	if ( doNormals ) {
 		glDisableClientState(GL_NORMAL_ARRAY);
 		glDisable( GL_LIGHTING );

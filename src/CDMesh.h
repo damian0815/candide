@@ -30,11 +30,13 @@ class CDMesh
 	
 public:
 	CDMesh() {};
+	virtual ~CDMesh() {};
 	
 	void clear() { vertices.clear(); triangles.clear(); }
 	
 	void addVertex( const glm::vec3 &v ) { vertices.push_back(v); }
 	void addVertexNormal( const glm::vec3 &v ) { vertexNormals.push_back(v); }
+	void addTextureCoordinate( const glm::vec2 &coord ) { textureCoordinates.push_back(coord); }
 	void addFace( int v0, int v1, int v2 );
 	
 	void draw() const;
@@ -56,18 +58,30 @@ public:
 	size_t getNumNormals() const { return vertexNormals.size(); }
 	const glm::vec3& getNormal(size_t which) const { return vertexNormals.at(which); }
 	
+	size_t getNumTextureCoordinates() const { return textureCoordinates.size(); }
+	const glm::vec2& getTextureCoordinate( size_t i ) const { return textureCoordinates.at(i); }
+	
 	glm::vec3 getBoundingBoxCenter() const;
 	glm::vec3 getBoundingBoxSize() const;
 	void getBoundingBox( glm::vec3& minCornerOut, glm::vec3& maxCornerOut ) const;
 
 	void updateNormals();
+	
+protected:
+	
+	virtual void setupArrays() const;
+	virtual void teardownArrays() const;
+	
 private:
 	
 	
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> vertexNormals;
+	std::vector<glm::vec2> textureCoordinates;
+
 	std::vector<Triangle> triangles;
 	
+
 };
 
 #endif /* defined(__candide__CDMesh__) */

@@ -68,6 +68,8 @@ CDWindow::CDWindow(int w, int h, const char* label/*, CDFaceData* faceData*/ )
 	menu->add("Mesh/Bake 3d model");
 	menu->add("Mesh/Save baked 3d model as...");
 	menu->add("Mesh/Open baked 3d model...");
+	menu->add("Mesh/");
+	menu->add("Mesh/Bake textures to baked background mesh...");
 	
 	// create the face windows
 	Fl_Group* faceWindows = new Fl_Group( 10, menuHeight+10, w-interfaceWidth-30, h-menuHeight-20 );
@@ -336,6 +338,12 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 			
 			outfile.close();
 		}
+	}
+	
+	else if ( selection == "Bake textures to baked background mesh..." ) {
+		
+		CDApp::getInstance()->getScene().bakeTexturesToBakedBackgroundMesh();
+		
 	}
 			
 	else if ( selection == "Save" ) {

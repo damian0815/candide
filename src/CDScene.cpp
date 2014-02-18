@@ -10,6 +10,9 @@
 #include "CDApp.h"
 #include "CDAssimpLoader.h"
 #include "CDUtilities.h"
+#include "CDTextureBaker.h"
+#include "CDMeshObjWriter.h"
+
 #include <glm/gtc/matrix_transform.hpp>
 
 using namespace glm;
@@ -237,6 +240,17 @@ void CDScene::faceDataMeshChanged()
 	deformer.updateDeformation( CDApp::getInstance()->getFaceData().getControlMeshForMeanValueDeformation() );
 }
 
+#pragma mark Baking textures
+
+void CDScene::bakeTexturesToBakedBackgroundMesh()
+{
+	CDMesh bakedBackgroundMesh = deformer.getDeformedMesh();
+	CDTextureBaker textureBaker;
+	CDMesh baked = textureBaker.bake( bakedBackgroundMesh, "" );
+	
+	CDMeshObjWriter::writeObj( baked, "/tmp/testbake.obj" );
+}
+
 #pragma mark - Serialization
 
 picojson::value CDScene::serialize() const
@@ -254,12 +268,16 @@ picojson::value CDScene::serialize() const
 
 void CDScene::deserialize( const picojson::value& source )
 {
+	clear();
+	
 	object root = source.get<object>();
 	
 	object bgMesh = root["bgMesh"].get<object>();
 	
 	string path = bgMesh["path"].get<string>();
 	loadBackgroundMesh(path);
+	
+	backgroundMeshIsBaked = false;
 	backgroundMeshTransform = picojson_decodeMat4(bgMesh["transform"]);
 		
 }

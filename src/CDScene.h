@@ -47,6 +47,8 @@ public:
 
 	void clearBakedBackgroundMesh();
 	
+	/*! @brief Bake front and side textures into the current bakedBackgroundMesh. */
+	void bakeTexturesToBakedBackgroundMesh();
 	
 private:
 	
