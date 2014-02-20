@@ -48,7 +48,7 @@ public:
 	void clearBakedBackgroundMesh();
 	
 	/*! @brief Bake front and side textures into the current bakedBackgroundMesh. */
-	void bakeTexturesToBakedBackgroundMesh( const glm::mat4& frontWindowTextureTransform, float frontWindowTextureAspect );
+	void bakeTexturesToBakedBackgroundMesh( const std::string& frontWindowTexturePath, const glm::mat4& frontWindowTextureTransform, const std::string& sideWindowTexturePath, const glm::mat4& sideWindowTextureTransform );
 	
 private:
 	

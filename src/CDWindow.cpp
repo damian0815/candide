@@ -342,7 +342,7 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 	
 	else if ( selection == "Bake textures to baked background mesh..." ) {
 		
-		CDApp::getInstance()->getScene().bakeTexturesToBakedBackgroundMesh( faceWindowFront->getBackgroundImageTransform(), faceWindowFront->getBackgroundImageAspectRatio() );
+		CDApp::getInstance()->getScene().bakeTexturesToBakedBackgroundMesh( faceWindowFront->getBackgroundImagePath(), faceWindowFront->getBackgroundImageTransform(), faceWindowSide->getBackgroundImagePath(), faceWindowSide->getBackgroundImageTransform() );
 		
 	}
 			

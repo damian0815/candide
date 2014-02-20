@@ -25,6 +25,7 @@
 		2D5E82EF18A7EF52001C88D9 /* data in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2D5E82EE18A7EF35001C88D9 /* data */; };
 		2D97474E18A3F32800FD5A07 /* CDScene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D97474C18A3F32800FD5A07 /* CDScene.cpp */; };
 		2DBDEFF218A520ED00C6CF09 /* CDMeshObjWriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DBDEFF018A520ED00C6CF09 /* CDMeshObjWriter.cpp */; };
+		2DE7EA3218B6750200038AD5 /* CDFBO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2DE7EA3018B6750200038AD5 /* CDFBO.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -78,6 +79,8 @@
 		2D97474D18A3F32800FD5A07 /* CDScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDScene.h; path = src/CDScene.h; sourceTree = SOURCE_ROOT; };
 		2DBDEFF018A520ED00C6CF09 /* CDMeshObjWriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDMeshObjWriter.cpp; path = src/CDMeshObjWriter.cpp; sourceTree = SOURCE_ROOT; };
 		2DBDEFF118A520ED00C6CF09 /* CDMeshObjWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDMeshObjWriter.h; path = src/CDMeshObjWriter.h; sourceTree = SOURCE_ROOT; };
+		2DE7EA3018B6750200038AD5 /* CDFBO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CDFBO.cpp; path = src/CDFBO.cpp; sourceTree = SOURCE_ROOT; };
+		2DE7EA3118B6750200038AD5 /* CDFBO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDFBO.h; path = src/CDFBO.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +117,7 @@
 			isa = PBXGroup;
 			children = (
 				2D2528FD182680BB004647E1 /* UI */,
+				2DE7EA2E18B6724E00038AD5 /* IO */,
 				2D2528FF182680CB004647E1 /* Model */,
 				2D2528FE182680C5004647E1 /* Glue */,
 				2D189B351826510B0085EBED /* shape.cxx */,
@@ -129,8 +133,6 @@
 				2D2528ED18267752004647E1 /* CDFaceWindow.h */,
 				2D189B38182651430085EBED /* CDWindow.cpp */,
 				2D189B39182651430085EBED /* CDWindow.h */,
-				2D064E83189BF95900503574 /* CDImageLoader.cpp */,
-				2D064E84189BF95900503574 /* CDImageLoader.h */,
 				2D45A78518A94DE900164DEE /* CDMVMDTestWindow.cpp */,
 				2D45A78618A94DE900164DEE /* CDMVMDTestWindow.h */,
 			);
@@ -156,22 +158,15 @@
 		2D2528FF182680CB004647E1 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				2D4B21E918AD44EB0016604B /* CDMeshMapper.cpp */,
-				2D4B21EA18AD44EB0016604B /* CDMeshMapper.h */,
+				2DE7EA2F18B6725D00038AD5 /* Manipulations */,
 				2D2528F218267CB7004647E1 /* CDFaceData.cpp */,
 				2D2528F318267CB7004647E1 /* CDFaceData.h */,
-				2D45A78918AA9CD000164DEE /* CDMeanValueMeshDeformer.cpp */,
-				2D45A78A18AA9CD000164DEE /* CDMeanValueMeshDeformer.h */,
 				2D25290818268C3A004647E1 /* CDMesh.cpp */,
 				2D25290918268C3A004647E1 /* CDMesh.h */,
 				2D97474C18A3F32800FD5A07 /* CDScene.cpp */,
 				2D97474D18A3F32800FD5A07 /* CDScene.h */,
-				2D15B76518A037E00069BF4A /* CDAssimpLoader.cpp */,
-				2D15B76618A037E00069BF4A /* CDAssimpLoader.h */,
-				2DBDEFF018A520ED00C6CF09 /* CDMeshObjWriter.cpp */,
-				2DBDEFF118A520ED00C6CF09 /* CDMeshObjWriter.h */,
-				2D4B21FC18B29DC10016604B /* CDTextureBaker.cpp */,
-				2D4B21FD18B29DC10016604B /* CDTextureBaker.h */,
+				2DE7EA3018B6750200038AD5 /* CDFBO.cpp */,
+				2DE7EA3118B6750200038AD5 /* CDFBO.h */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -182,6 +177,32 @@
 				2D13188D18265498005624D7 /* OpenGL.framework */,
 			);
 			name = frameworks;
+			sourceTree = "<group>";
+		};
+		2DE7EA2E18B6724E00038AD5 /* IO */ = {
+			isa = PBXGroup;
+			children = (
+				2D064E83189BF95900503574 /* CDImageLoader.cpp */,
+				2D064E84189BF95900503574 /* CDImageLoader.h */,
+				2D15B76518A037E00069BF4A /* CDAssimpLoader.cpp */,
+				2D15B76618A037E00069BF4A /* CDAssimpLoader.h */,
+				2DBDEFF018A520ED00C6CF09 /* CDMeshObjWriter.cpp */,
+				2DBDEFF118A520ED00C6CF09 /* CDMeshObjWriter.h */,
+			);
+			name = IO;
+			sourceTree = "<group>";
+		};
+		2DE7EA2F18B6725D00038AD5 /* Manipulations */ = {
+			isa = PBXGroup;
+			children = (
+				2D4B21E918AD44EB0016604B /* CDMeshMapper.cpp */,
+				2D4B21EA18AD44EB0016604B /* CDMeshMapper.h */,
+				2D45A78918AA9CD000164DEE /* CDMeanValueMeshDeformer.cpp */,
+				2D45A78A18AA9CD000164DEE /* CDMeanValueMeshDeformer.h */,
+				2D4B21FC18B29DC10016604B /* CDTextureBaker.cpp */,
+				2D4B21FD18B29DC10016604B /* CDTextureBaker.h */,
+			);
+			name = Manipulations;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -244,6 +265,7 @@
 				2D4B21EB18AD44EB0016604B /* CDMeshMapper.cpp in Sources */,
 				2D064E85189BF95900503574 /* CDImageLoader.cpp in Sources */,
 				2D189B3A182651430085EBED /* CDWindow.cpp in Sources */,
+				2DE7EA3218B6750200038AD5 /* CDFBO.cpp in Sources */,
 				2D2528FC182680AD004647E1 /* CDUtilities.cpp in Sources */,
 				2D2528EE18267752004647E1 /* CDFaceWindow.cpp in Sources */,
 				2D97474E18A3F32800FD5A07 /* CDScene.cpp in Sources */,

@@ -34,6 +34,7 @@ public:
 	
 	void setBackgroundImage( const std::string& pngFilename );
 	glm::mat4 getBackgroundImageTransform();
+	const std::string& getBackgroundImagePath() { return backgroundTexturePath; }
 	float getBackgroundImageAspectRatio();
 	//void setBackground3DModel( const std::string& modelFilename );
 	

@@ -26,12 +26,22 @@ using namespace std;
 GLuint CDImageLoader::createOpenGLTextureFromImage(const string& filename, int &width, int &height)
 {
 	Fl_Shared_Image* image = Fl_Shared_Image::get(filename.c_str());
+	if ( !image ) {
+		return 0;
+	}
+	width = image->w();
+	height = image->h();
 	
-	
+	return CDImageLoader::createOpenGLTextureFromImage( image );
+}
+
+GLuint CDImageLoader::createOpenGLTextureFromImage( Fl_Shared_Image* image )
+{
 	if ( image && image->w() && image->h() ) {
 		
-		width = image->w();
-		height = image->h();
+		int width = image->w();
+		int height = image->h();
+
 		const char* const imageData = image->data()[0];
 		// make sure width is an even number of pixels
 		int outPadding = width%2;
@@ -61,6 +71,7 @@ GLuint CDImageLoader::createOpenGLTextureFromImage(const string& filename, int &
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,
 					 GL_RGB, GL_UNSIGNED_BYTE, (GLvoid*) imageDataRepacked);
 		
+		free(imageDataRepacked);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		
 		glBindTexture(GL_TEXTURE_2D,0);

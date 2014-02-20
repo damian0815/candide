@@ -70,6 +70,13 @@ bool CDAssimpLoader::loadModel( const std::string& path, bool joinIdenticalVerti
 		}
 	}
 	
+	if ( firstMesh->mNumUVComponents[0] == 2 ) {
+		for ( int i=0; i<firstMesh->mNumVertices; i++ ) {
+			aiVector3D st = firstMesh->mTextureCoords[0][i];
+			loadedMesh.addTextureCoordinate( vec2(st.x,st.y) );
+		}
+	}
+	
 	
 	for ( int i=0; i<firstMesh->mNumFaces; i++ ) {
 		aiFace f = firstMesh->mFaces[i];

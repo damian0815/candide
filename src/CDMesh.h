@@ -60,6 +60,7 @@ public:
 	
 	size_t getNumTextureCoordinates() const { return textureCoordinates.size(); }
 	const glm::vec2& getTextureCoordinate( size_t i ) const { return textureCoordinates.at(i); }
+	void removeAllTextureCoordinates() { textureCoordinates.clear(); }
 	
 	glm::vec3 getBoundingBoxCenter() const;
 	glm::vec3 getBoundingBoxSize() const;
