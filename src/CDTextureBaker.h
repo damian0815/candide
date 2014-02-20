@@ -25,7 +25,7 @@ public:
 	void setFrontImage( const std::string& path, const glm::mat4& transform );
 	
 	/*! @abstract Bakes the images into the mesh and outputs a combined texture */
-	CDMesh bake( const CDMesh& mesh, const std::string& textureOutputPath );
+	CDMesh bake( const CDMesh& mesh, const glm::mat4& textureTransform, float textureAspect, const std::string& textureOutputPath );
 	
 private:
 	

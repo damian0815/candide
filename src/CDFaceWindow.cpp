@@ -263,6 +263,21 @@ int CDFaceWindow::handle(int code)
 		
 }
 
+glm::mat4 CDFaceWindow::getBackgroundImageTransform()
+{
+	mat4 t = glm::translate(bgImageTranslate) * glm::scale(bgImageScale, bgImageScale, bgImageScale);
+	return t;
+}
+
+float CDFaceWindow::getBackgroundImageAspectRatio()
+{
+	if ( backgroundTextureH<=0 ) {
+		return 1.0f;
+	}
+	
+	return (float)backgroundTextureW/(float)backgroundTextureH;
+}
+
 #pragma mark - Serialization/deserialization
 
 value CDFaceWindow::serialize()

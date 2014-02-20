@@ -33,6 +33,8 @@ public:
 	picojson::value serialize();
 	
 	void setBackgroundImage( const std::string& pngFilename );
+	glm::mat4 getBackgroundImageTransform();
+	float getBackgroundImageAspectRatio();
 	//void setBackground3DModel( const std::string& modelFilename );
 	
 	//void setBackground3dModelTransform( const glm::mat4& transform );

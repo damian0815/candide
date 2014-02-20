@@ -242,11 +242,11 @@ void CDScene::faceDataMeshChanged()
 
 #pragma mark Baking textures
 
-void CDScene::bakeTexturesToBakedBackgroundMesh()
+void CDScene::bakeTexturesToBakedBackgroundMesh( const mat4& frontWindowTextureTransform, float frontWindowTextureAspect )
 {
 	CDMesh bakedBackgroundMesh = deformer.getDeformedMesh();
 	CDTextureBaker textureBaker;
-	CDMesh baked = textureBaker.bake( bakedBackgroundMesh, "" );
+	CDMesh baked = textureBaker.bake( bakedBackgroundMesh, frontWindowTextureTransform, frontWindowTextureAspect, "" );
 	
 	CDMeshObjWriter::writeObj( baked, "/tmp/testbake.obj" );
 }

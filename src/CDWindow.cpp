@@ -270,7 +270,7 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 	
 	
 	if ( selection == "Load front image..." || selection == "Load side image..." ) {
-		string selectedFile = showFileChooser( "Select image", Fl_Native_File_Chooser::BROWSE_FILE, "Images\t*.{ping,jpg,jpeg}");
+		string selectedFile = showFileChooser( selection, Fl_Native_File_Chooser::BROWSE_FILE, "Images\t*.{png,jpg,jpeg}");
 		
 		if ( selectedFile.size() ) {
 			if ( selection == "Load front image..." ) {
@@ -289,7 +289,7 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 	}
 
 	else if ( selection == "Load 3d model..." ) {
-		string selectedFile = showFileChooser( "Select 3d model", Fl_Native_File_Chooser::BROWSE_FILE, "3D Models\t*.{3ds,obj,dae,blend,ase,ifc,xgl,zgl,ply,dxf,lwo,lws,lxo,stl,x,ac,ms3d,cob,scn");
+		string selectedFile = showFileChooser( "Load 3d model", Fl_Native_File_Chooser::BROWSE_FILE, "3D Models\t*.{3ds,obj,dae,blend,ase,ifc,xgl,zgl,ply,dxf,lwo,lws,lxo,stl,x,ac,ms3d,cob,scn");
 		
 		if ( selectedFile.size() ) {
 			CDApp::getInstance()->getScene().loadBackgroundMesh(selectedFile);
@@ -304,7 +304,7 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 	}
 	
 	else if ( selection == "Open baked 3d model..." ) {
-		string selectedFile = showFileChooser( "Select baked 3d model", Fl_Native_File_Chooser::BROWSE_FILE, "Candide baked 3D models\t*.candideBaked3DModel" );
+		string selectedFile = showFileChooser( "Load baked 3d model", Fl_Native_File_Chooser::BROWSE_FILE, "Candide baked 3D models\t*.candideBaked3DModel" );
 		
 		if ( selectedFile.size() ) {
 			ifstream infile(selectedFile);
@@ -342,7 +342,7 @@ void CDWindow::menuChanged(Fl_Menu_Bar *menu, const Fl_Menu_Item *selectedItem)
 	
 	else if ( selection == "Bake textures to baked background mesh..." ) {
 		
-		CDApp::getInstance()->getScene().bakeTexturesToBakedBackgroundMesh();
+		CDApp::getInstance()->getScene().bakeTexturesToBakedBackgroundMesh( faceWindowFront->getBackgroundImageTransform(), faceWindowFront->getBackgroundImageAspectRatio() );
 		
 	}
 			
